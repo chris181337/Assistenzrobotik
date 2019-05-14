@@ -15,12 +15,21 @@ function sysCall_init()
     produced=0
     pause=false
    
-    h=sim.createPureShape(0,1+2+8+4,{0.1,0.1,0.1},1,nil)
+    h=sim.createPureShape(0,1+2+8+4,{0.1,0.1,0.1},1,nil) --get handle for the newly created shape
     simAddObjectCustomData(h,125487,0)
     sim.setObjectParent(h,model,true)
     startPos={0,0,0}
     nextTargetPos={0.25,0,0.55}
     sim.setObjectPosition(h,model,startPos)
+
+-- TODO random taken pictures, perhabs an array
+--    texturePath = sim.getStringParameter(sim.stringparam_scene_path)
+--    texturePath = path .. '/../catkin_ws/src/'
+--    sim.includeAbs(texturePath)
+
+--    simCreateTexture('picture1',1,const simFloat* planeSizes,const simFloat* scalingUV,const simFloat* xy_g,simInt fixedResolution,simInt* textureId,simInt* resolution,const simVoid* reserved)
+    sim.setShapeTexture(
+    
     st=0
 end
 ------------------------------------------------------------------------------ 
