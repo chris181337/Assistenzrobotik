@@ -11,14 +11,16 @@ function sysCall_init()
     -- Enable an image publisher and subscriber:
     pub=simROS.advertise('/image', 'sensor_msgs/Image')
     simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
---    sub=simROS.subscribe('/classification', classification, 'classification_callback')
---    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
+    sub=simROS.subscribe('/category', classific, 'classification_callback')
+    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
 end
 
 
---function classification_callback(msg)
+function classification_callback(msg)
+    print = printToConsole
+    print(msg.obj_type)
     -- TODO auslesen der Nachrichteninhalte und Weiterleitung der Aufgabe an Roboter ODER direkt von Roboter subscriben?! 
---end
+end
 
 
 function sysCall_sensing()
