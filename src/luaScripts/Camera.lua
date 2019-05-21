@@ -1,8 +1,4 @@
 
-
-
-
-
 function sysCall_init() 
     -- Prepare a floating view with the camera views:
     cam=sim.getObjectAssociatedWithScript(sim.handle_self)
@@ -10,27 +6,24 @@ function sysCall_init()
     sim.adjustView(view,cam,64)
 
     -- Get some handles:
-    activeVisionSensor=sim.getObjectHandle('Vision_sensor')
-    passiveVisionSensor=sim.getObjectHandle('PassiveVision_sensor')
+    visionSensor=sim.getObjectHandle('visionSensor')
     
     -- Enable an image publisher and subscriber:
     pub=simROS.advertise('/image', 'sensor_msgs/Image')
     simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
-    sub=simROS.subscribe('/image', 'sensor_msgs/Image', 'imageMessage_callback')
-    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
-    
+--    sub=simROS.subscribe('/classification', classification, 'classification_callback')
+--    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
 end
 
 
-function imageMessage_callback(msg)
-    -- Apply the received image to the passive vision sensor that acts as an image container
-    sim.setVisionSensorCharImage(passiveVisionSensor,msg.data)
-end
+--function classification_callback(msg)
+    -- TODO auslesen der Nachrichteninhalte und Weiterleitung der Aufgabe an Roboter ODER direkt von Roboter subscriben?! 
+--end
 
 
 function sysCall_sensing()
     -- Publish the image of the active vision sensor:
-    local data,w,h=sim.getVisionSensorCharImage(activeVisionSensor)
+    local data,w,h=sim.getVisionSensorCharImage(visionSensor)
     d={}
     d['header']={seq=0,stamp=simROS.getTime(), frame_id="a"}
     d['height']=h

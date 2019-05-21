@@ -15,9 +15,9 @@ class ObjectClassification(object):
   def __init__(self):
 
     self.pub = rospy.Publisher(
-        '/classification', classification, queue_size=10)
+        '/classification', classification, queue_size=10) # (topicName, messageType, bufferSize)
     self.sub = rospy.Subscriber(
-        "/image", ImageMsg, self.callback)
+        "/image", 'sensor_msgs/Image', self.callback)
     self.bridge = CvBridge()
 
     rospack = rospkg.RosPack()
@@ -25,18 +25,13 @@ class ObjectClassification(object):
 
 
   def classify_objects(self, image):
-    """ Calculates the object detection neural network output and returns
-          detected objects.
+    """ Calculates the object classification neural network output
 
     Args:
       image: np.array with shape [H, W, 3] and dtype np.uint8
         the image to detect objects in
 
     Returns:
-      boxes: np.array with shape [NumDetections, 4]
-        bounding box for each detected object as [ymin, xmin, ymax, xmax]
-      classes: np.array with shape [NumDetections]
-        index of the detected object
       probs: np.array with shape [NumDetections]
         probabilitiy of the detected object
     """
@@ -47,15 +42,9 @@ class ObjectClassification(object):
 
 
   def publish_classification(self, image_msg, probs):
-    """ Publish the detections via robotto_msgs/Detections messages.
-
-    Args:
+"""    Args:
       image_msg: sensor_msgs.msg.Image
         initial Image received from the camera gives timestamp to detection
-      boxes: np.array with shape [NumDetections, 4]
-        bounding boxes represented by [ymin, xmin, ymax, xmax]
-      classes: np.array with shape [NumDetections]
-        index of the detected object
       probs: np.array with shape [NumDetections]
         probabilitiy of the detected object
 
@@ -63,7 +52,7 @@ class ObjectClassification(object):
       None
 
     Side-Effects:
-      Publishes robotto_msgs/Detections
+      Publishes classification.msg
     """
 
     #new msg-object
