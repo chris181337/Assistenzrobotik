@@ -28,7 +28,7 @@ function sysCall_init()
 --    sim.includeAbs(texturePath)
 
 --    simCreateTexture('picture1',1,const simFloat* planeSizes,const simFloat* scalingUV,const simFloat* xy_g,simInt fixedResolution,simInt* textureId,simInt* resolution,const simVoid* reserved)
-    sim.setShapeTexture(
+--    sim.setShapeTexture(
     
     st=0
 end
