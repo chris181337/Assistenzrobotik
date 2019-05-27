@@ -1,6 +1,6 @@
-
 function sysCall_init() 
     model=sim.getObjectAssociatedWithScript(sim.handle_self)
+    uiH=simGetUIHandle('producerUI')
     output=-1
     sens=sim.getObjectHandle('Producer_sensOut')
     rawCol={0,0,0}
@@ -12,7 +12,7 @@ function sysCall_init()
     simAddObjectCustomData(h,125487,0)
     sim.setObjectParent(h,model,true)
     startPos={0,0,0}
-    nextTargetPos={0.25,0,0.55}
+    nextTargetPos={0.25,0,0.6}
     sim.setObjectPosition(h,model,startPos)
 
 -- TODO random taken pictures, perhabs an array
@@ -36,7 +36,9 @@ colorCorrectionFunction=function(_aShapeHandle_)
   end 
   return '@backCompatibility1:'.._aShapeHandle_ 
 end 
----------------------------------------------------------------------------
+------------------------------------------------------------------------------ 
+ 
+
     
 scanOutput=function()
     r,dist,pt,obj=sim.handleProximitySensor(sens)
@@ -55,6 +57,12 @@ function sysCall_cleanup()
 end 
 
 function sysCall_actuation() 
+
+------ CONFIGURATION ------
+    col={0,0,0} -- color of parts
+    ft = 2.0    -- fabrication time
+---------------------------
+
     -- Make a cube slowly appear:
     t=(st-fabStart)/ft
     if t>1.0 then t=1.0 end
@@ -78,7 +86,7 @@ function sysCall_actuation()
         r=0.1+math.random()*0.15
         a=math.pi*2*math.random()
         sim.setObjectPosition(h,model,nextTargetPos)
-        nextTargetPos={0.25,0,0.55}
+        nextTargetPos={0.25,0,0.6}
     
         s=sim.getScriptSimulationParameter(sim.handle_self,'outBuffer')
         s=s..sim.packInt32Table({h})
@@ -104,14 +112,11 @@ function sysCall_actuation()
             end
         end
     end
-    
-    
-    updateUI(uiH,produced)
-    
-    if not paused then
+        
+   if not paused then
         st=st+sim.getSimulationTimeStep()
         sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.75,0.75,0.75})
-    else
+    else --]]
         sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.8,0.1,0.1})
     end
 end 
