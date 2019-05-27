@@ -1,13 +1,6 @@
 
 function sysCall_init() 
     model=sim.getObjectAssociatedWithScript(sim.handle_self)
-    uiH=simGetUIHandle('producerUI')
-    col_=sim.getScriptSimulationParameter(sim.handle_self,'partColor')
-    ft=sim.getScriptSimulationParameter(sim.handle_self,"fabricationTime")
-    partType=sim.getScriptSimulationParameter(sim.handle_self,"partType")
-    --simSetUIButtonLabel(uiH,23,ft)
-    --simSetUIButtonLabel(uiH,24,col_)
-    --simSetUIButtonLabel(uiH,25,partType)
     output=-1
     sens=sim.getObjectHandle('Producer_sensOut')
     rawCol={0,0,0}
@@ -43,112 +36,7 @@ colorCorrectionFunction=function(_aShapeHandle_)
   end 
   return '@backCompatibility1:'.._aShapeHandle_ 
 end 
------------------------------------------------------------------------------- 
- 
- 
-updateUI=function(uiHandle,number)
-    if (previousCounter~=number) then
-        activeCol={0.1,1.0,0.1}
-        passiveCol={0.1,0.1,0.1}
-        c=math.fmod(number,1000)
-        for i=0,2,1 do
-            d=math.floor(c/(10^(2-i)))
-            b=100+i*10
-            if (d==0) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,passiveCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==1) then
-                simSetUIButtonColor(uiHandle,b+0,passiveCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,passiveCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,passiveCol)
-            end
-            if (d==2) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,passiveCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==3) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==4) then
-                simSetUIButtonColor(uiHandle,b+0,passiveCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,passiveCol)
-            end
-            if (d==5) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,passiveCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==6) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,passiveCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==7) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,passiveCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,passiveCol)
-            end
-            if (d==8) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==9) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            c=c-d*(10^(2-i))
-        end
-    end
-    previousCounter=number
-end
+---------------------------------------------------------------------------
     
 scanOutput=function()
     r,dist,pt,obj=sim.handleProximitySensor(sens)
@@ -167,21 +55,6 @@ function sysCall_cleanup()
 end 
 
 function sysCall_actuation() 
-    col_=simGetUIButtonLabel(uiH,24)
-    col={0,0,0}
-    i=1
-    for token in string.gmatch(col_,"[^%s]+") do
-        col[i]=token
-        i=i+1
-    end
-    ft=tonumber(simGetUIButtonLabel(uiH,23))
-    if (ft<0.1) then ft=0.1 end
-    simSetUIButtonLabel(uiH,23,ft)
-    partType=tonumber(simGetUIButtonLabel(uiH,25))
-    paused=sim.boolAnd32(simGetUIButtonProperty(uiH,22),sim.buttonproperty_isdown)~=0
-    scanOutput() -- allow dynamic reconfiguration
-    
-    
     -- Make a cube slowly appear:
     t=(st-fabStart)/ft
     if t>1.0 then t=1.0 end
