@@ -1,6 +1,6 @@
 function sysCall_init() 
     model=sim.getObjectAssociatedWithScript(sim.handle_self)
-    uiH=simGetUIHandle('producerUI')
+--    uiH=simGetUIHandle('producerUI')
     output=-1
     sens=sim.getObjectHandle('Producer_sensOut')
     rawCol={0,0,0}
@@ -14,16 +14,9 @@ function sysCall_init()
     startPos={0,0,0}
     nextTargetPos={0.25,0,0.6}
     sim.setObjectPosition(h,model,startPos)
-
--- TODO random taken pictures, perhabs an array
---    texturePath = sim.getStringParameter(sim.stringparam_scene_path)
---    texturePath = path .. '/../catkin_ws/src/'
---    sim.includeAbs(texturePath)
-
---    simCreateTexture('picture1',1,const simFloat* planeSizes,const simFloat* scalingUV,const simFloat* xy_g,simInt fixedResolution,simInt* textureId,simInt* resolution,const simVoid* reserved)
---    sim.setShapeTexture(
-    
     st=0
+    projectTexture()
+
 end
 ------------------------------------------------------------------------------ 
 -- Following few lines automatically added by V-REP to guarantee compatibility 
@@ -37,7 +30,22 @@ colorCorrectionFunction=function(_aShapeHandle_)
   return '@backCompatibility1:'.._aShapeHandle_ 
 end 
 ------------------------------------------------------------------------------ 
- 
+
+projectTexture = function()
+    -- texture from random image-file
+    -- http://www.forum.coppeliarobotics.com/viewtopic.php?t=2793
+    rnd = math.random(0, 641)
+    filename = "arob_image" .. rnd .. ".jpg"
+    print(filename) 
+    path = sim.getStringParameter(sim.stringparam_scene_path)
+    path = path .. '/../catkin_ws/src/dataset_test/'
+    textureHandle, textureId = simCreateTexture(path .. filename, 1, nil, nil, nil, 0, nil)
+    if (textureId~=-1 and h~=-1) then
+        simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.1,0.1}, nil, nil)
+        simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable)
+--        simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable)
+    end
+end
 
     
 scanOutput=function()
@@ -60,7 +68,7 @@ function sysCall_actuation()
 
 ------ CONFIGURATION ------
     col={0,0,0} -- color of parts
-    ft = 2.0    -- fabrication time
+    ft = 1.5    -- fabrication time
 ---------------------------
 
     -- Make a cube slowly appear:
@@ -96,7 +104,8 @@ function sysCall_actuation()
         simAddObjectCustomData(h,125487,0)
         sim.setObjectParent(h,model,true)
         sim.setObjectPosition(h,model,startPos)
-    end
+        projectTexture()
+   end
     
     if (output~=-1) then
         d=sim.getScriptSimulationParameter(sim.handle_self,'outBuffer')

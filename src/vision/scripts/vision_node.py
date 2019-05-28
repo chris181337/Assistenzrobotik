@@ -15,9 +15,9 @@ class ObjectClassification(object):
   def __init__(self):
 
     self.pub = rospy.Publisher(
-        '/category', classific, queue_size=10) # (topicName, messageType, bufferSize)
+        '/Category', classific, queue_size=10) # (topicName, messageType, bufferSize)
     self.sub = rospy.Subscriber(
-        "/image", ImageMsg, self.callback)
+        "/Image", ImageMsg, self.callback)
     self.bridge = CvBridge()
 
     rospack = rospkg.RosPack()

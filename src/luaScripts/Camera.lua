@@ -9,19 +9,19 @@ function sysCall_init()
     visionSensor=sim.getObjectHandle('visionSensor')
     
     -- Enable an image publisher and subscriber:
-    pub=simROS.advertise('/image', 'sensor_msgs/Image')
+    pub=simROS.advertise('/Image', 'sensor_msgs/Image')
     simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
-    sub=simROS.subscribe('/category', classific, 'classification_callback')
-    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
+--    sub=simROS.subscribe('/category', classific, 'classification_callback')
+--    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
 end
 
-
+--[[
 function classification_callback(msg)
     print = printToConsole
     print(msg.obj_type)
     -- TODO auslesen der Nachrichteninhalte und Weiterleitung der Aufgabe an Roboter ODER direkt von Roboter subscriben?! 
 end
-
+--]]
 
 function sysCall_sensing()
     -- Publish the image of the active vision sensor:
@@ -44,5 +44,5 @@ function sysCall_cleanup()
 
     -- Shut down publisher and subscriber. Not really needed from a simulation script (automatic shutdown)
     simROS.shutdownPublisher(pub)
-    simROS.shutdownSubscriber(sub)
+--    simROS.shutdownSubscriber(sub)
 end
