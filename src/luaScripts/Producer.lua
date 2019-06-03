@@ -40,10 +40,13 @@ projectTexture = function()
     path = sim.getStringParameter(sim.stringparam_scene_path)
     path = path .. '/../catkin_ws/src/dataset_test/'
     textureHandle, textureId = simCreateTexture(path .. filename, 1, nil, nil, nil, 0, nil)
+    print("Handle: " .. textureHandle) 
+    print("ID: " .. textureId)
+    print("h: " .. h)
     if (textureId~=-1 and h~=-1) then
         simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.1,0.1}, nil, nil)
-        simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable)
---        simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable)
+        simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable or sim.objectspecialproperty_detectable_all)
+        simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable or sim.objectspecialproperty_detectable_all)
     end
 end
 
