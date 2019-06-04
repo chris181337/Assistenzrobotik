@@ -17,6 +17,9 @@ function sysCall_init()
     st=0
     projectTexture()
 
+--conveyer dependence
+sensor=sim.getObjectHandle('ConveyorBelt_sensor')
+
 end
 ------------------------------------------------------------------------------ 
 -- Following few lines automatically added by V-REP to guarantee compatibility 
@@ -74,6 +77,8 @@ function sysCall_actuation()
     ft = 1.5    -- fabrication time
 ---------------------------
 
+    if (sim.readProximitySensor(sensor)<=0) then--conveyor sensor condition
+  
     -- Make a cube slowly appear:
     t=(st-fabStart)/ft
     if t>1.0 then t=1.0 end
@@ -130,5 +135,6 @@ function sysCall_actuation()
         sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.75,0.75,0.75})
     else --]]
         sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.8,0.1,0.1})
+    end
     end
 end 
