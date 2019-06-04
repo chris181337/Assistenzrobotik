@@ -45,8 +45,8 @@ projectTexture = function()
     print("h: " .. h)
     if (textureId~=-1 and h~=-1) then
         simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.1,0.1}, nil, nil)
-        simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable or sim.objectspecialproperty_detectable_all)
-        simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable or sim.objectspecialproperty_detectable_all)
+        simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable+sim.objectspecialproperty_detectable_all)
+        simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable+sim.objectspecialproperty_detectable_all)
     end
 end
 

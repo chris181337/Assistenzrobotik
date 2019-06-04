@@ -21,7 +21,10 @@ class ObjectClassification(object):
     self.bridge = CvBridge()
 
     rospack = rospkg.RosPack()
-    self.model = tf.keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model.h5') 
+    self.model = tf.keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model.h5')
+    self.model._make_predict_function()
+    self.model.summary()
+    print(self.model.output)
 
 
   def classify_objects(self, image):

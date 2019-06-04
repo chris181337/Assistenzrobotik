@@ -13,7 +13,7 @@ function sysCall_actuation()
 -- Conveyor abschalten wenn Sensor Objekt detektiert
     beltVelocity=sim.getScriptSimulationParameter(sim.handle_self,"conveyorBeltVelocity")
     if (sim.readProximitySensor(sensor)>0) then
-    beltVelocity=0
+        beltVelocity=0
     end
     -- We move the texture attached to the conveyor belt to give the impression of movement:
     t=sim.getSimulationTime()
