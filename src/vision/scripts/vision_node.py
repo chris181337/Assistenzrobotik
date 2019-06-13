@@ -15,13 +15,16 @@ class ObjectClassification(object):
   def __init__(self):
 
     self.pub = rospy.Publisher(
-        '/category', classific, queue_size=10) # (topicName, messageType, bufferSize)
+        '/Category', classific, queue_size=10) # (topicName, messageType, bufferSize)
     self.sub = rospy.Subscriber(
-        "/image", ImageMsg, self.callback)
+        "/Image", ImageMsg, self.callback)
     self.bridge = CvBridge()
 
     rospack = rospkg.RosPack()
-    self.model = tf.keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model.h5') 
+    self.model = tf.keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model.h5')
+    self.model._make_predict_function()
+    self.model.summary()
+    print(self.model.output)
 
 
   def classify_objects(self, image):

@@ -1,13 +1,6 @@
-
 function sysCall_init() 
     model=sim.getObjectAssociatedWithScript(sim.handle_self)
-    uiH=simGetUIHandle('producerUI')
-    col_=sim.getScriptSimulationParameter(sim.handle_self,'partColor')
-    ft=sim.getScriptSimulationParameter(sim.handle_self,"fabricationTime")
-    partType=sim.getScriptSimulationParameter(sim.handle_self,"partType")
-    --simSetUIButtonLabel(uiH,23,ft)
-    --simSetUIButtonLabel(uiH,24,col_)
-    --simSetUIButtonLabel(uiH,25,partType)
+--    uiH=simGetUIHandle('producerUI')
     output=-1
     sens=sim.getObjectHandle('Producer_sensOut')
     rawCol={0,0,0}
@@ -19,18 +12,14 @@ function sysCall_init()
     simAddObjectCustomData(h,125487,0)
     sim.setObjectParent(h,model,true)
     startPos={0,0,0}
-    nextTargetPos={0.25,0,0.55}
+    nextTargetPos={0.25,0,0.6}
     sim.setObjectPosition(h,model,startPos)
-
--- TODO random taken pictures, perhabs an array
---    texturePath = sim.getStringParameter(sim.stringparam_scene_path)
---    texturePath = path .. '/../catkin_ws/src/'
---    sim.includeAbs(texturePath)
-
---    simCreateTexture('picture1',1,const simFloat* planeSizes,const simFloat* scalingUV,const simFloat* xy_g,simInt fixedResolution,simInt* textureId,simInt* resolution,const simVoid* reserved)
---    sim.setShapeTexture(
-    
     st=0
+    projectTexture()
+
+--conveyer dependence
+sensor=sim.getObjectHandle('ConveyorBelt_sensor')
+
 end
 ------------------------------------------------------------------------------ 
 -- Following few lines automatically added by V-REP to guarantee compatibility 
@@ -44,111 +33,26 @@ colorCorrectionFunction=function(_aShapeHandle_)
   return '@backCompatibility1:'.._aShapeHandle_ 
 end 
 ------------------------------------------------------------------------------ 
- 
- 
-updateUI=function(uiHandle,number)
-    if (previousCounter~=number) then
-        activeCol={0.1,1.0,0.1}
-        passiveCol={0.1,0.1,0.1}
-        c=math.fmod(number,1000)
-        for i=0,2,1 do
-            d=math.floor(c/(10^(2-i)))
-            b=100+i*10
-            if (d==0) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,passiveCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==1) then
-                simSetUIButtonColor(uiHandle,b+0,passiveCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,passiveCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,passiveCol)
-            end
-            if (d==2) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,passiveCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==3) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==4) then
-                simSetUIButtonColor(uiHandle,b+0,passiveCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,passiveCol)
-            end
-            if (d==5) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,passiveCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==6) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,passiveCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==7) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,passiveCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,passiveCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,passiveCol)
-            end
-            if (d==8) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,activeCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            if (d==9) then
-                simSetUIButtonColor(uiHandle,b+0,activeCol)
-                simSetUIButtonColor(uiHandle,b+1,activeCol)
-                simSetUIButtonColor(uiHandle,b+2,activeCol)
-                simSetUIButtonColor(uiHandle,b+3,activeCol)
-                simSetUIButtonColor(uiHandle,b+4,passiveCol)
-                simSetUIButtonColor(uiHandle,b+5,activeCol)
-                simSetUIButtonColor(uiHandle,b+6,activeCol)
-            end
-            c=c-d*(10^(2-i))
-        end
+
+projectTexture = function()
+    -- texture from random image-file
+    -- http://www.forum.coppeliarobotics.com/viewtopic.php?t=2793
+    rnd = math.random(0, 641)
+    filename = "arob_image" .. rnd .. ".jpg"
+    print(filename) 
+    path = sim.getStringParameter(sim.stringparam_scene_path)
+    path = path .. '/../catkin_ws/src/dataset_test/'
+    textureHandle, textureId = simCreateTexture(path .. filename, 1, nil, nil, nil, 0, nil)
+    print("Handle: " .. textureHandle) 
+    print("ID: " .. textureId)
+    print("h: " .. h)
+    if (textureId~=-1 and h~=-1) then
+        simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.1,0.1}, nil, nil)
+        simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable+sim.objectspecialproperty_detectable_all)
+        simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable+sim.objectspecialproperty_detectable_all)
     end
-    previousCounter=number
 end
+
     
 scanOutput=function()
     r,dist,pt,obj=sim.handleProximitySensor(sens)
@@ -167,21 +71,14 @@ function sysCall_cleanup()
 end 
 
 function sysCall_actuation() 
-    col_=simGetUIButtonLabel(uiH,24)
-    col={0,0,0}
-    i=1
-    for token in string.gmatch(col_,"[^%s]+") do
-        col[i]=token
-        i=i+1
-    end
-    ft=tonumber(simGetUIButtonLabel(uiH,23))
-    if (ft<0.1) then ft=0.1 end
-    simSetUIButtonLabel(uiH,23,ft)
-    partType=tonumber(simGetUIButtonLabel(uiH,25))
-    paused=sim.boolAnd32(simGetUIButtonProperty(uiH,22),sim.buttonproperty_isdown)~=0
-    scanOutput() -- allow dynamic reconfiguration
-    
-    
+
+------ CONFIGURATION ------
+    col={0,0,0} -- color of parts
+    ft = 1.5    -- fabrication time
+---------------------------
+
+    if (sim.readProximitySensor(sensor)<=0) then--conveyor sensor condition
+  
     -- Make a cube slowly appear:
     t=(st-fabStart)/ft
     if t>1.0 then t=1.0 end
@@ -205,7 +102,7 @@ function sysCall_actuation()
         r=0.1+math.random()*0.15
         a=math.pi*2*math.random()
         sim.setObjectPosition(h,model,nextTargetPos)
-        nextTargetPos={0.25,0,0.55}
+        nextTargetPos={0.25,0,0.6}
     
         s=sim.getScriptSimulationParameter(sim.handle_self,'outBuffer')
         s=s..sim.packInt32Table({h})
@@ -215,7 +112,8 @@ function sysCall_actuation()
         simAddObjectCustomData(h,125487,0)
         sim.setObjectParent(h,model,true)
         sim.setObjectPosition(h,model,startPos)
-    end
+        projectTexture()
+   end
     
     if (output~=-1) then
         d=sim.getScriptSimulationParameter(sim.handle_self,'outBuffer')
@@ -231,14 +129,12 @@ function sysCall_actuation()
             end
         end
     end
-    
-    
-    updateUI(uiH,produced)
-    
-    if not paused then
+        
+   if not paused then
         st=st+sim.getSimulationTimeStep()
         sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.75,0.75,0.75})
-    else
+    else --]]
         sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.8,0.1,0.1})
+    end
     end
 end 

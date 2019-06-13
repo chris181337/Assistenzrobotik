@@ -1,6 +1,7 @@
 function sysCall_init() 
     forwarder=sim.getObjectHandle('customizableConveyor_forwarder')
     textureShape=sim.getObjectHandle('customizableConveyor_tableTop')
+    sensor=sim.getObjectHandle('ConveyorBelt_sensor')
 end
 
 function sysCall_cleanup() 
@@ -8,12 +9,18 @@ function sysCall_cleanup()
 end 
 
 function sysCall_actuation() 
+
+-- Conveyor abschalten wenn Sensor Objekt detektiert
     beltVelocity=sim.getScriptSimulationParameter(sim.handle_self,"conveyorBeltVelocity")
-    
+    if (sim.readProximitySensor(sensor)>0) then
+        beltVelocity=0
+    end
     -- We move the texture attached to the conveyor belt to give the impression of movement:
     t=sim.getSimulationTime()
     sim.setObjectFloatParameter(textureShape,sim.shapefloatparam_texture_x,t*beltVelocity)
     
+
+
     -- Here we "fake" the transportation pads with a single static rectangle that we dynamically reset
     -- at each simulation pass (while not forgetting to set its initial velocity vector) :
     relativeLinearVelocity={beltVelocity,0,0}
@@ -29,4 +36,6 @@ function sysCall_actuation()
     sim.setObjectFloatParameter(forwarder,sim.shapefloatparam_init_velocity_x,absoluteLinearVelocity[1])
     sim.setObjectFloatParameter(forwarder,sim.shapefloatparam_init_velocity_y,absoluteLinearVelocity[2])
     sim.setObjectFloatParameter(forwarder,sim.shapefloatparam_init_velocity_z,absoluteLinearVelocity[3])
+
+
 end 
