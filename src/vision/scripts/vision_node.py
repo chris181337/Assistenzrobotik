@@ -6,6 +6,7 @@ import numpy as np
 import rospkg
 import rospy
 import tensorflow as tf
+import keras
 from cv_bridge import CvBridge, CvBridgeError
 from PIL import Image, ImageDraw, ImageFont
 from sensor_msgs.msg import Image as ImageMsg
@@ -14,17 +15,28 @@ from vision.msg import classific
 class ObjectClassification(object):
   def __init__(self):
 
+
+    rospack = rospkg.RosPack()
+    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_3.h5')
+    # self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape=(256, 256, 3), alpha=1.0, include_top=True, weights=None, input_tensor=None, pooling=None, classes=3)
+    self.model.compile(loss='categorical_crossentropy',
+              optimizer='Adam',
+              metrics=['accuracy'])
+    self.model._make_predict_function()
+#    self.sess = tf.Session()
+#    with open(rospack.get_path('vision') + '/src/arob_classification_model-2.pb', "rb") as f:
+#       graphDef = tf.GraphDef() 
+#       graphDef.ParseFromString(f.read())
+#https://github.com/davidsandberg/facenet/issues/161
+#       tf.import_graph_def(graphDef, name="")
+#    self.inputTensor = self.sess.get_default_graph().get_tensor_by_name("input_1:0")
+#    self.outputTensor = self.sess.get_default_graph().get_tensor_by_name("Logits/Softmax:0")
+
     self.pub = rospy.Publisher(
         '/Category', classific, queue_size=10) # (topicName, messageType, bufferSize)
     self.sub = rospy.Subscriber(
         "/Image", ImageMsg, self.callback)
     self.bridge = CvBridge()
-
-    rospack = rospkg.RosPack()
-    self.model = tf.keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model.h5')
-    self.model._make_predict_function()
-    self.model.summary()
-    print(self.model.output)
 
 
   def classify_objects(self, image):
@@ -42,6 +54,7 @@ class ObjectClassification(object):
     image = np.array(Image.fromarray(image).resize((256, 256)))
     image = np.expand_dims(image, axis=0)
     return self.model.predict(image)
+#    return self.sess.run(self.outputTensor, feed_dict = { self.inputTensor:image })
 
 
   def publish_classification(self, image_msg, probs):
