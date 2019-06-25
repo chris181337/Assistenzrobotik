@@ -14,7 +14,7 @@ function sysCall_init()
     startPos={0,0,0}
     nextTargetPos={0.25,0,0.6}
     sim.setObjectPosition(h,model,startPos)
-    st=0
+    st=0 -- simulation time
     projectTexture()
 
 --conveyer dependence

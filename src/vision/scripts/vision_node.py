@@ -10,14 +10,15 @@ import keras
 from cv_bridge import CvBridge, CvBridgeError
 from PIL import Image, ImageDraw, ImageFont
 from sensor_msgs.msg import Image as ImageMsg
-from vision.msg import classific
+from std_msgs.msg import Int16 as Int16Msg
+# from vision.msg import classific
 
 class ObjectClassification(object):
   def __init__(self):
 
 
     rospack = rospkg.RosPack()
-    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_3.h5')
+    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_imgnet.h5')
     # self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape=(256, 256, 3), alpha=1.0, include_top=True, weights=None, input_tensor=None, pooling=None, classes=3)
     self.model.compile(loss='categorical_crossentropy',
               optimizer='Adam',
@@ -33,7 +34,8 @@ class ObjectClassification(object):
 #    self.outputTensor = self.sess.get_default_graph().get_tensor_by_name("Logits/Softmax:0")
 
     self.pub = rospy.Publisher(
-        '/Category', classific, queue_size=10) # (topicName, messageType, bufferSize)
+#       '/Category', classific, queue_size=10) # (topicName, messageType, bufferSize)
+	'/Category', Int16Msg, queue_size=10)
     self.sub = rospy.Subscriber(
         "/Image", ImageMsg, self.callback)
     self.bridge = CvBridge()
@@ -72,18 +74,22 @@ class ObjectClassification(object):
     """
 
     #new msg-object
-    classif = classific()
+#    classif = classific()
+    classif =Int16Msg()
 
     obj_max_probs = np.argmax(probs)
     max_probs = np.max(probs)
     if  max_probs <= 0.6:
       # no recognition 
-      classif.obj_type = 3
-      classif.prob = max_probs
-      # class with highest probability 
+      classif.data = 3
+#      classif.data = 3
+#      classif.prob = max_probs
+
+   # class with highest probability 
     else:
-      classif.obj_type = obj_max_probs
-      classif.prob = max_probs
+      classif.data = obj_max_probs
+#      classif.obj_type = obj_max_probs
+#      classif.prob = max_probs
 
     self.pub.publish(classif)
 
