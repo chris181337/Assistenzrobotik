@@ -1,4 +1,3 @@
-
 function sysCall_init() 
     -- Prepare a floating view with the camera views:
     cam=sim.getObjectAssociatedWithScript(sim.handle_self)
@@ -7,7 +6,10 @@ function sysCall_init()
 
     -- Get some handles:
     visionSensor=sim.getObjectHandle('visionSensor')
-    
+    proxSensor=sim.getObjectHandle('Proximity_sensor')
+--    conveyer=sim.getObjectHandle('customizableConveyer')
+
+
     -- Enable an image publisher and subscriber:
     pub=simROS.advertise('/Image', 'sensor_msgs/Image')
     simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
@@ -24,17 +26,21 @@ end
 --]]
 
 function sysCall_sensing()
-    -- Publish the image of the active vision sensor:
-    local data,w,h=sim.getVisionSensorCharImage(visionSensor)
-    d={}
-    d['header']={seq=0,stamp=simROS.getTime(), frame_id="a"}
-    d['height']=h
-    d['width']=w
-    d['encoding']='rgb8'
-    d['is_bigendian']=1
-    d['step']=w*3
-    d['data']=data
-    simROS.publish(pub,d)
+    ---- send picture only, if sensor detects the cuboid -----
+    if (sim.readProximitySensor(proxSensor)>0) then        
+	-- Publish the image of the active vision sensor:
+	local data,w,h=sim.getVisionSensorCharImage(visionSensor)
+	d={}
+	d['header']={seq=0,stamp=simROS.getTime(), frame_id="a"}
+	d['height']=h
+	d['width']=w
+	d['encoding']='rgb8'
+	d['is_bigendian']=1
+	d['step']=w*3
+	d['data']=data
+	simROS.publish(pub,d)
+    end
+
 end
 
 function sysCall_cleanup()
