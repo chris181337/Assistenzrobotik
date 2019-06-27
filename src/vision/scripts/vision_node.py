@@ -18,7 +18,7 @@ class ObjectClassification(object):
 
 
     rospack = rospkg.RosPack()
-    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_xModel1.h5') # arob_classification_model_imgnetDropout2
+    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_xModel1.h5') #arob_classification_model_imgnetDropout2 
     self.model.compile(loss='categorical_crossentropy',
               optimizer='Adam',
               metrics=['categorical_accuracy'])

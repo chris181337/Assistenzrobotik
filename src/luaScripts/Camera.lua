@@ -11,18 +11,29 @@ function sysCall_init()
     -- Enable an image publisher and subscriber:
     pub=simROS.advertise('/Image', 'sensor_msgs/Image')
     simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
-    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'classification_callback')
-    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
+--    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'classification_callback')
+--    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
+
+    -- set flag of proximity sensor to false (doesn't detect something)
+    flag = false
+
 end
 
-function classification_callback(msg)
-    print(msg.data)
-end
+--function classification_callback(msg)
+--    print(msg.data)
+--end
 
 
 function sysCall_sensing()
-    ---- send picture only, if sensor detects the cuboid
-    if ( sim.readProximitySensor(proxSensor)>0 ) then
+    ---- send one picture only, if sensor detects the cuboid 
+--    conveyerHdl = sim.getObjectHandle("customizableConveyer")
+--    conveyerScriptHdl = sim.getScriptAssociatedWithObject(conveyerHdl)
+--    beltVelocity = sim.getScriptSimulationParameter(conveyerHdl,"conveyorBeltVelocity")
+
+    if ( sim.readProximitySensor(proxSensor) > 0 and flag==false) then
+--        sim.setScriptSimulationParameter(conveyerScriptHdl,"conveyorBeltVelocity", 0) -- stop belt
+	flag = true
+
 	-- Publish the image of the active vision sensor
    		local data,w,h=sim.getVisionSensorCharImage(visionSensor)
 		d={}
@@ -34,6 +45,10 @@ function sysCall_sensing()
 		d['step']=w*3
 		d['data']=data
 		simROS.publish(pub,d)
+   end
+
+   if ( sim.readProximitySensor(proxSensor) <= 0 and flag==true) then
+	flag = false
    end
 
 end

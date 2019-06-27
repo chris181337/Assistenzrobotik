@@ -15,7 +15,7 @@ function sysCall_actuation()
 
 -- wenn Sensor Objekt detektiert => Conveyor abschalten & "ready" publishen
     beltVelocity=sim.getScriptSimulationParameter(sim.handle_self,"conveyorBeltVelocity")
-    if (sim.readProximitySensor(sensor)>0) then
+    if (sim.readProximitySensor(sensor)>0) thenl
         beltVelocity=0
 	simROS.publish(pub,{data=true})
     else
