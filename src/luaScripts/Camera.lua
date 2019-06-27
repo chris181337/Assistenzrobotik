@@ -4,13 +4,9 @@ function sysCall_init()
     view=sim.floatingViewAdd(0.9,0.9,0.2,0.2,0)
     sim.adjustView(view,cam,64)
 
---    n = 7 -- counter for cuboid-pictures
-
     -- Get some handles:
     visionSensor=sim.getObjectHandle('visionSensor')
     proxSensor=sim.getObjectHandle('Proximity_sensor')
---    conveyer=sim.getObjectHandle('customizableConveyer')
-
 
     -- Enable an image publisher and subscriber:
     pub=simROS.advertise('/Image', 'sensor_msgs/Image')
@@ -25,12 +21,9 @@ end
 
 
 function sysCall_sensing()
-    ---- send picture only, if sensor detects the cuboid ----- TODO only the first time the sensor detects this cuboid (8 pictures in total)
+    ---- send picture only, if sensor detects the cuboid
     if ( sim.readProximitySensor(proxSensor)>0 ) then
---	n = n + 1
---	print(n)
 	-- Publish the image of the active vision sensor
---	if (n % 8 == 0) then
    		local data,w,h=sim.getVisionSensorCharImage(visionSensor)
 		d={}
 		d['header']={seq=0,stamp=simROS.getTime(), frame_id="a"}
@@ -41,7 +34,6 @@ function sysCall_sensing()
 		d['step']=w*3
 		d['data']=data
 		simROS.publish(pub,d)
---	end
    end
 
 end

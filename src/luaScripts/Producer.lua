@@ -12,13 +12,13 @@ function sysCall_init()
     simAddObjectCustomData(h,125487,0)
     sim.setObjectParent(h,model,true)
     startPos={0,0,0}
-    nextTargetPos={0.25,0,0.6}
+    nextTargetPos={0.25,0,0.57}
     sim.setObjectPosition(h,model,startPos)
     st=0 -- simulation time
     projectTexture()
 
 --conveyer dependence
-sensor=sim.getObjectHandle('ConveyorBelt_sensor')
+    sensor=sim.getObjectHandle('ConveyorBelt_sensor')
 
 end
 ------------------------------------------------------------------------------ 
@@ -41,7 +41,7 @@ projectTexture = function()
     filename = "arob_image" .. rnd .. ".jpg"
     print(filename) 
     path = sim.getStringParameter(sim.stringparam_scene_path)
-    path = path .. '/../catkin_ws/src/dataset_test/'
+    path = path .. '/../catkin_ws/src/presentation_dataset/'
     textureHandle, textureId = simCreateTexture(path .. filename, 1, nil, nil, nil, 0, nil)
     print("Handle: " .. textureHandle) 
     print("ID: " .. textureId)
@@ -102,7 +102,7 @@ function sysCall_actuation()
         r=0.1+math.random()*0.15
         a=math.pi*2*math.random()
         sim.setObjectPosition(h,model,nextTargetPos)
-        nextTargetPos={0.25,0,0.6}
+        nextTargetPos={0.25,0,0.57}
     
         s=sim.getScriptSimulationParameter(sim.handle_self,'outBuffer')
         s=s..sim.packInt32Table({h})
