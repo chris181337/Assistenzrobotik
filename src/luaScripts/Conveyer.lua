@@ -2,6 +2,9 @@ function sysCall_init()
     forwarder=sim.getObjectHandle('customizableConveyor_forwarder')
     textureShape=sim.getObjectHandle('customizableConveyor_tableTop')
     sensor=sim.getObjectHandle('ConveyorBelt_sensor')
+
+    pub=simROS.advertise('/qbit_ready', 'std_msgs/Bool')--publish: ist qbit an richtiger position zum greifen?
+    sub=simROS.subscribe('/qbit_ready', 'std_msgs/Bool', 'qbitready_callback')
 end
 
 function sysCall_cleanup() 
@@ -10,10 +13,14 @@ end
 
 function sysCall_actuation() 
 
--- Conveyor abschalten wenn Sensor Objekt detektiert
+-- wenn Sensor Objekt detektiert => Conveyor abschalten & "ready" publishen
     beltVelocity=sim.getScriptSimulationParameter(sim.handle_self,"conveyorBeltVelocity")
     if (sim.readProximitySensor(sensor)>0) then
         beltVelocity=0
+	simROS.publish(pub,{data=true})
+    else
+	simROS.publish(pub,{data=false})
+	
     end
     -- We move the texture attached to the conveyor belt to give the impression of movement:
     t=sim.getSimulationTime()
@@ -36,6 +43,8 @@ function sysCall_actuation()
     sim.setObjectFloatParameter(forwarder,sim.shapefloatparam_init_velocity_x,absoluteLinearVelocity[1])
     sim.setObjectFloatParameter(forwarder,sim.shapefloatparam_init_velocity_y,absoluteLinearVelocity[2])
     sim.setObjectFloatParameter(forwarder,sim.shapefloatparam_init_velocity_z,absoluteLinearVelocity[3])
-
-
 end 
+
+function qbitready_callback(msg)
+    --print(msg.data)--würde permanent true/false ausgeben
+end
