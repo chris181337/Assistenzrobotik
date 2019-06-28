@@ -8,7 +8,7 @@ function sysCall_init()
     visionSensor=sim.getObjectHandle('visionSensor')
     proxSensor=sim.getObjectHandle('Proximity_sensor')
 
-    -- Enable an image publisher and subscriber:
+    -- Enable an image publisher
     pub=simROS.advertise('/Image', 'sensor_msgs/Image')
     simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
 --    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'classification_callback')

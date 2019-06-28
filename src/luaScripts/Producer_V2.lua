@@ -3,48 +3,30 @@ function sysCall_init()
     uiH=simGetUIHandle('producerUI')
     sens=sim.getObjectHandle('Producer_sensOut')
 
---    col_=sim.getScriptSimulationParameter(sim.handle_self,'partColor')
---    ft=sim.getScriptSimulationParameter(sim.handle_self,"fabricationTime")
---    simSetUIButtonLabel(uiH,23,ft)
---    simSetUIButtonLabel(uiH,24,col_)
+-- Enable publisher for true class of the cuboids spawned (Nagel: 0, Schraube: 1, Unterlegscheibe: 2, None: 3) 
+    pub=simROS.advertise('/True_Class', 'std_msgs/Int8')
 
+
+-- some configs of producer (fabrication time, color of cuboids etc.)
     output=-1
     rawCol={0,0,0}
     fabStart=0
     produced=0
     pause=false
 
--- config
     col={0,0,0} 
     ft = 1.8
     h=sim.createPureShape(0,1+2+8+4,{0.1,0.1,0.1},1,nil) --get handle for the newly created shape
     simAddObjectCustomData(h,125487,0)
     sim.setObjectParent(h,model,true)
     startPos={0,0,0}
-    nextTargetPos={0.25,0,0.6}
+    nextTargetPos={0.25,0,0.57}
     sim.setObjectPosition(h,model,startPos)
     st=0 -- simulation time
     projectTexture()
 
 --conveyer dependence
     sensor=sim.getObjectHandle('ConveyorBelt_sensor')
-
--- subscriber on Object-Class
-    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'classification_callback')
-    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
-
---  arrays for collecting key values (-1 for empty space)
---[[    class_nominal= {} 
-    class_actual = {}
-    for i=0, 99 do
-      class_nominal[i] = -1
-      class_actual[i] = -1
-    end
-
-    cnt_act = 0
-    cnt_nom = 0
---]]
-
 end
 
 ------------------------------------------------------------------------------ 
@@ -60,64 +42,38 @@ colorCorrectionFunction=function(_aShapeHandle_)
 end 
 ------------------------------------------------------------------------------ 
 
-function classification_callback(msg)
-    print(msg.data)
---[[    class_actual[cnt] = msg.data
-    cnt_act = cnt_act + 1
-    if (cnt_act == 10) then --PARAMETER
-	-- TODO calculate precision & recall per class here
-	truePred = 0
-	falsePred = 0
-	for i=0, 99 do
-	  if (class_nominal[i] - class_actual[i] == 0) then
-	    truePred = truePred +1 
-	  else
-	    falsePred = falsePred +1
-	  end
-	end
-	sim.stopSimulation()
-    end
---]]
-end
-
- 
 projectTexture = function()
-    -- texture from random image-file
-    -- http://www.forum.coppeliarobotics.com/viewtopic.php?t=2793
-
+-- texture from random image-file
     rndClass = math.random(0, 3)
 
     if (rndClass == 3) then
       rndPic = math.random(0, 9)
       filename = "none" .. rndPic .. ".jpg"
       print(filename)
---      class_nominal[cnt_nom] = 3
---      cnt_nom = cnt_nom +1
+      simROS.publish(pub,{data=3})
     end
 
     if (rndClass == 2) then
       rndPic = math.random(0, 29)
       filename = "unterlegscheibe" .. rndPic .. ".jpg"
       print(filename)
---      class_nominal[cnt_nom] = 2
---      cnt_nom = cnt_nom +1
+      simROS.publish(pub,{data=2})
     end
 
     if (rndClass == 1) then
       rndPic = math.random(0, 29)
       filename = "schraube" .. rndPic .. ".jpg"
       print(filename)
---      class_nominal[cnt_nom] = 1
---      cnt_nom = cnt_nom +1
+      simROS.publish(pub,{data=1})
+
     end
 
     if (rndClass == 0) then
       rndPic = math.random(0, 29)
       filename = "nagel" .. rndPic .. ".jpg"
       print(filename)
---      class_nominal[cnt_nom] = 0
---      cnt_nom = cnt_nom +1
-    end
+      simROS.publish(pub,{data=0})
+   end
 
     path = sim.getStringParameter(sim.stringparam_scene_path)
     path = path .. '/../catkin_ws/src/presentation_dataset/'
@@ -289,7 +245,7 @@ function sysCall_actuation()
 		sim.setShapeColor(colorCorrectionFunction(h),nil,0,{0.75,0.75,0.75})
 		r=0.1+math.random()*0.15
 		sim.setObjectPosition(h,model,nextTargetPos)
-		nextTargetPos={0.25,0,0.6}
+		nextTargetPos={0.25,0,0.57}
 	    
 		s=sim.getScriptSimulationParameter(sim.handle_self,'outBuffer')
 		s=s..sim.packInt32Table({h})
