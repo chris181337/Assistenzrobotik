@@ -1,10 +1,12 @@
 function sysCall_init()
---    consoleHandle = sim.auxiliaryConsoleOpen(KPI-viewer, 10000, 2+4)
+    consoleHandle = sim.auxiliaryConsoleOpen('KPI-viewer', 10000, 2+4)
     
 -- subscriber on Object-Class
     subNN = simROS.subscribe('/Category', 'std_msgs/Int16', 'nn_class_callback')
     subTrue = simROS.subscribe('/True_Class', 'std_msgs/Int8', 'true_class_callback')
 
+   cnt_nn = 0
+   cnt_true = 0
 --[[
 --  arrays for collecting key values (-1 for empty space)
     class_nominal= {} 
@@ -20,7 +22,11 @@ function sysCall_init()
 end
 
 function nn_class_callback(msg)
-    print('Neural Network says: ' .. msg.data)
+    cnt_nn = cnt_nn +1
+    sim.auxiliaryConsolePrint(consoleHandle,'\nFor Image Nr. ' .. cnt_nn .. ', the neural network says: ' .. msg.data)
+    sim.auxiliaryConsolePrint(consoleHandle,'\nI----------------------------I')
+
+   
 --[[    class_actual[cnt] = msg.data
     cnt_act = cnt_act + 1
     if (cnt_act == 10) then --PARAMETER
@@ -41,7 +47,8 @@ end
 
 
 function true_class_callback(msg)
-    print('True class is: ' .. msg.data)
+    cnt_true = cnt_true +1
+    sim.auxiliaryConsolePrint(consoleHandle, '\nFor Image Nr. ' .. cnt_true .. ', the true class is: ' .. msg.data)
 end
 
 function sysCall_actuation()
