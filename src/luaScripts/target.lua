@@ -18,3 +18,7 @@ end
 --    end 
 --end
 
+--sub=simROS.subscribe('/qbit_ready', 'std_msgs/Bool', 'qbitready_callback')
+--function qbitready_callback(msg)
+--    print(msg.data)--permanent true/false ausgeben
+--end
