@@ -31,7 +31,6 @@ function sysCall_init()
         sim.displayDialog("ERROR","This version of the SICK sensor is only supported from V-REP V3.0.4 and upwards.&&nMake sure to update your V-REP.",sim.dlgstyle_ok,false,nil,{0.8,0,0,0,0,0},{0.5,0,0,1,1,1})
     end
 
-
     pub = simROS.advertise('/safety_sensor_data', 'std_msgs/Float32MultiArray')
 end
 
