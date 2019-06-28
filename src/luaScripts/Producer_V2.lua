@@ -8,7 +8,6 @@ function sysCall_init()
 --    simSetUIButtonLabel(uiH,23,ft)
 --    simSetUIButtonLabel(uiH,24,col_)
 
- 
     output=-1
     rawCol={0,0,0}
     fabStart=0
@@ -34,7 +33,20 @@ function sysCall_init()
     sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'classification_callback')
     simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
 
+--  arrays for collecting key values (-1 for empty space)
+--[[    class_nominal= {} 
+    class_actual = {}
+    for i=0, 99 do
+      class_nominal[i] = -1
+      class_actual[i] = -1
+    end
+
+    cnt_act = 0
+    cnt_nom = 0
+--]]
+
 end
+
 ------------------------------------------------------------------------------ 
 -- Following few lines automatically added by V-REP to guarantee compatibility 
 -- with V-REP 3.1.3 and earlier: 
@@ -50,6 +62,22 @@ end
 
 function classification_callback(msg)
     print(msg.data)
+--[[    class_actual[cnt] = msg.data
+    cnt_act = cnt_act + 1
+    if (cnt_act == 10) then --PARAMETER
+	-- TODO calculate precision & recall per class here
+	truePred = 0
+	falsePred = 0
+	for i=0, 99 do
+	  if (class_nominal[i] - class_actual[i] == 0) then
+	    truePred = truePred +1 
+	  else
+	    falsePred = falsePred +1
+	  end
+	end
+	sim.stopSimulation()
+    end
+--]]
 end
 
  
@@ -63,25 +91,32 @@ projectTexture = function()
       rndPic = math.random(0, 9)
       filename = "none" .. rndPic .. ".jpg"
       print(filename)
-
+--      class_nominal[cnt_nom] = 3
+--      cnt_nom = cnt_nom +1
     end
 
     if (rndClass == 2) then
       rndPic = math.random(0, 29)
       filename = "unterlegscheibe" .. rndPic .. ".jpg"
       print(filename)
+--      class_nominal[cnt_nom] = 2
+--      cnt_nom = cnt_nom +1
     end
 
     if (rndClass == 1) then
       rndPic = math.random(0, 29)
       filename = "schraube" .. rndPic .. ".jpg"
       print(filename)
+--      class_nominal[cnt_nom] = 1
+--      cnt_nom = cnt_nom +1
     end
 
     if (rndClass == 0) then
       rndPic = math.random(0, 29)
       filename = "nagel" .. rndPic .. ".jpg"
       print(filename)
+--      class_nominal[cnt_nom] = 0
+--      cnt_nom = cnt_nom +1
     end
 
     path = sim.getStringParameter(sim.stringparam_scene_path)
