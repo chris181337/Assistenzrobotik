@@ -12,21 +12,13 @@ function sysCall_init()
    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'cubit_sort_callback')--subscribe: nele qbit category
    --sub=simROS.subscribe('/safety_sensor_data', 'std_msgs/Float32MultiArray','security_callback')--subscribe: tom security speed
    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
-
-
 end
-
-
-
 
 --qbit type auslesen
 function cubit_sort_callback(qbit_cat)
 print('Erkenne Qbit: ' .. qbit_cat.data)
-	--category_buffer=category_buffer+qbit_cat.data[0]--füge erkanntes objekt in puffer ein
-
-    end 
-
-
+--category_buffer=category_buffer+qbit_cat.data[0]--füge erkanntes objekt in puffer ein
+    end
 
 --[[
 --Security auslesen
@@ -38,14 +30,13 @@ end
 
 
 --conveyor sensor auslesen => wenn ready motion start
-
 function qbitready_callback(ready)
 if(ready.data==false) then 
-print('Cube Not in position yet!')
+--print('Cube Not in position yet!')--verified
   end
 
 if(ready.data==true) then 
-print('Cube in position! Now Grabbing it...')
+--print('Cube in position! Now Grabbing it...')--verified
 --[[
         --drop box into case of category
 	local pathHandle = sim.getObjectHandle('Path' .. category_buffer[0])                  --hin zum objekt 
