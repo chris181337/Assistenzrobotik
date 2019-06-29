@@ -10,6 +10,8 @@ function sysCall_init()
 --    pub=simROS.advertise('/True_Class', 'std_msgs/Int8MultiArray')
     pub=simROS.advertise('/True_Class', 'std_msgs/Int8', 10)
 
+    path_scene = sim.getStringParameter(sim.stringparam_scene_path)
+    path = path_scene .. '/../catkin_ws/src/presentation_dataset/'
 --[[
 -- PARAMETER
     cnt = 1
@@ -38,6 +40,7 @@ function sysCall_init()
     nextTargetPos={0.25,0,0.57}
     sim.setObjectPosition(h,model,startPos)
     st=0 -- simulation time
+   
 --    projectTexture()
 
 
@@ -56,6 +59,7 @@ colorCorrectionFunction=function(_aShapeHandle_)
 end 
 ------------------------------------------------------------------------------ 
 
+
 projectTexture = function()
 -- texture from random image-file
     rndClass = math.random(0, 3)
@@ -65,7 +69,7 @@ projectTexture = function()
     if (rndClass == 3) then
       rndPic = math.random(0, 9)
       filename = "none" .. rndPic .. ".jpg"
-      print(filename)
+--      print(filename)
 --      classTrueArray[cnt] = 3
 --      cnt = cnt +1
     end
@@ -73,7 +77,7 @@ projectTexture = function()
     if (rndClass == 2) then
       rndPic = math.random(0, 29)
       filename = "unterlegscheibe" .. rndPic .. ".jpg"
-      print(filename)
+--      print(filename)
 --      simROS.publish(pub,{data=2})
 --      classTrueArray[cnt] = 2
 --      cnt = cnt +1
@@ -82,7 +86,7 @@ projectTexture = function()
     if (rndClass == 1) then
       rndPic = math.random(0, 29)
       filename = "schraube" .. rndPic .. ".jpg"
-      print(filename)
+--      print(filename)
 --      simROS.publish(pub,{data=1})
 --      classTrueArray[cnt] = 1
 --      cnt = cnt +1
@@ -91,14 +95,12 @@ projectTexture = function()
     if (rndClass == 0) then
       rndPic = math.random(0, 29)
       filename = "nagel" .. rndPic .. ".jpg"
-      print(filename)
+--      print(filename)
 --     simROS.publish(pub,{data=0})
 --      classTrueArray[cnt] = 0
 --      cnt = cnt +1
     end
 
-    path = sim.getStringParameter(sim.stringparam_scene_path)
-    path = path .. '/../catkin_ws/src/presentation_dataset/'
     textureHandle, textureId = simCreateTexture(path .. filename, 1, nil, nil, nil, 0, nil)
 --    print("Handle: " .. textureHandle) 
 --    print("ID: " .. textureId)
@@ -247,14 +249,6 @@ scanOutput=function()
     end
 end
 
-
-function sysCall_cleanup() 
-    if sim.isHandleValid(model)==1 then
-        sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.75,0.75,0.75})
-    end
-
-end 
-
 function sysCall_actuation() 
 -- config
     col={0,0,0}
@@ -327,5 +321,15 @@ function sysCall_actuation()
 		sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.8,0.1,0.1})
 	    end
     end
+
+end 
+
+
+function sysCall_cleanup() 
+    if sim.isHandleValid(model)==1 then
+        sim.setShapeColor(colorCorrectionFunction(model),nil,0,{0.75,0.75,0.75})
+    end
+
+    simROS.shutdownPublisher(pub)
 
 end 
