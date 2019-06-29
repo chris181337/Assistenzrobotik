@@ -59,7 +59,7 @@ end
 projectTexture = function()
 -- texture from random image-file
     rndClass = math.random(0, 3)
-    print(rndClass)
+--    print(rndClass)
     simROS.publish(pub,{data = rndClass})
 
     if (rndClass == 3) then
@@ -103,7 +103,7 @@ projectTexture = function()
 --    print("Handle: " .. textureHandle) 
 --    print("ID: " .. textureId)
 --    print("h: " .. h)
-    print("------------------------")
+--    print("------------------------")
 
     if (textureId~=-1 and h~=-1) then
         simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.15,0.15}, nil, nil)
