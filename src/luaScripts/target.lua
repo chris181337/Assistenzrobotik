@@ -126,7 +126,7 @@ sim.setThreadAutomaticSwitch(false) --disable automatic thread switches
 	local category=3       --was für ein Qbit ist das?
 	local security=false   --safety gegeben?
 	local flag=true
-	local mydata=4		--4= noch nix neues
+	local category=4		--4= noch nix neues
 -- Here we execute the regular thread code:
 print('Starte Target Loop:')
 while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
@@ -134,19 +134,22 @@ while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
 --lese/aktualisiere Signalinfos:
 --ready   =sim.getIntSignal("ready_signal")
 --category=sim.getIntSignal("category_signal")
---security=true
 
---signal anzeigen
---wenn was neues
-	myData=sim.getIntegerSignal("category_signal")
-	if myData then--wenn nicht nil
-	if(myData~=4)then--und was neues
+--security signal handling:
+
+--ready signal handling:
+
+--Category Signal handling:
+	category=sim.getIntegerSignal("category_signal")--Signal ansehn
+	if category then--wenn nicht nil
+	if(category~=4)then--und was neues
 	print('target hat von Projektor category empfangen:')
-	print(myData)
-	sim.setIntegerSignal("category_signal",4)
+	print(category)--signal anzeigen, in puffer schreiben
+	sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
 	end	
 	end
 
+--Wenn gerade alle 2 bedingungen erfüllt bewegungen starten:
 --pathHandle = sim.getObjectHandle('Path3')--gibt den pfad an der abgefahren werden soll
 --sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
 --pathHandle = sim.getObjectHandle('Path3r')--gibt den pfad an der abgefahren werden soll
