@@ -9,9 +9,9 @@ function sysCall_init()
     proxSensor=sim.getObjectHandle('Proximity_sensor')
 
     -- Enable an image publisher
-    pub=simROS.advertise('/Image', 'sensor_msgs/Image')
-    simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
---    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'classification_callback')
+    pub=simROS.advertise('/Image', 'sensor_msgs/Image', 10)
+    simROS.publisherTreatUInt8ArrayAsString(pub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)    
+--    sub=simROS.subscribe('/Category', 'std_msgs/Int16', 'predictedClass_callback')
 --    simROS.subscriberTreatUInt8ArrayAsString(sub) -- treat uint8 arrays as strings (much faster, tables/arrays are kind of slow in Lua)
 
     -- set flag of proximity sensor to false (doesn't detect something)
@@ -19,7 +19,7 @@ function sysCall_init()
 
 end
 
---function classification_callback(msg)
+--function predictedClass_callback(msg)
 --    print(msg.data)
 --end
 
