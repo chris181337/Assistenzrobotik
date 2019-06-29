@@ -30,7 +30,7 @@ end
 --conveyor sensor auslesen
 function qbitready_callback(ready)
  if(ready.data==false) then 
- sim.setIntegerSignal("ready_signal", 1)
+ sim.setIntegerSignal("ready_signal", 0)
 --print('ready signal false gesendet')
  end
  if(ready.data==true) then 
