@@ -124,8 +124,8 @@ sim.setThreadAutomaticSwitch(false) --disable automatic thread switches
  --Sammle folgende Infos aus Signalen:
 	local ready=0          --Ist der qbit schon da?
 	local category=3       --was für ein Qbit ist das?
-	local security=false   --safety gegeben?
-	local flag=true
+	local security=0   --safety gegeben?
+	local ready=0
 	local category=4		--4= noch nix neues
 -- Here we execute the regular thread code:
 print('Starte Target Loop:')
@@ -136,9 +136,15 @@ while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
 --category=sim.getIntSignal("category_signal")
 
 --security signal handling:
-
+	security=false
 --ready signal handling:
-
+	ready=sim.getIntegerSignal("ready_signal")
+	if ready then--wenn nicht nil
+	if (ready==1) then
+	print('target hat von Projektor ready empfangen')
+	print(ready)
+	end
+	end
 --Category Signal handling:
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
 	if category then--wenn nicht nil
