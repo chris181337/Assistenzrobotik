@@ -1,6 +1,7 @@
 
 function sysCall_init() 
     sensor = sim.getObjectAssociatedWithScript(sim.handle_self)
+    bill_handle = sim.getObjectHandle("Bill_base#0")
 
     visionSensor1Handle=sim.getObjectHandle("SICK_S300_sensor1")
     visionSensor2Handle=sim.getObjectHandle("SICK_S300_sensor2")
@@ -43,17 +44,33 @@ function sysCall_sensing()
 end
 
 function sysCall_sensing() 
-    depth1 = sim.getVisionSensorDepthBuffer(visionSensor1Handle)
-    depth2 = sim.getVisionSensorDepthBuffer(visionSensor2Handle)
+    -- get distance from bill-handle
+    data_length = 1
 
-    for i=1,#depth2 do
-        depth1[#depth1+1] = depth2[i]
+    position = simGetObjectPosition(bill_handle, -1)
+
+    if  position[1] > 4.0 and position[1] < 4.05 and
+        position[2] > -2.6 and position[2] < -2.55
+    then
+        depth1 = { 1000 }
+    else 
+        depth1 = { 0 }
     end
+
+    -- get distance with sensor
+    --data_length = 512
+
+    --depth1 = sim.getVisionSensorDepthBuffer(visionSensor1Handle)
+    --depth2 = sim.getVisionSensorDepthBuffer(visionSensor2Handle)
+
+    --for i=1,#depth2 do
+    --    depth1[#depth1+1] = depth2[i]
+    --end
 
     d = {}
     d["data"] = depth1
     d["layout"] = {
-        dim = { { label="x", size=512, stride=1 } },
+        dim = { { label="x", size=data_length, stride=1 } },
         data_offset = 0
     }
     simROS.publish(pub,d)

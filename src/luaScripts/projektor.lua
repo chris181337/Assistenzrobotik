@@ -21,10 +21,10 @@ end
 function safety_callback(safe)
 
 	if safe.data then
-	sim.setDoubleSignal("safety_signal",safe.data)
-	print(safe.data .. 'received')
+	--sim.setDoubleSignal("safety_signal",safe.data)
+	--print(safe.data .. 'received')
 	else
-	print('nil received')
+	--print('nil received')
 	end
 
 print('safetynode published:' .. safe.data)
