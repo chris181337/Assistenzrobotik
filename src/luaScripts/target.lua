@@ -124,27 +124,28 @@ sim.setThreadAutomaticSwitch(false) --disable automatic thread switches
  --Sammle folgende Infos aus Signalen:
 	local ready=0          --Ist der qbit schon da?
 	local category=3       --was für ein Qbit ist das?
-	local security=0   --safety gegeben?
+	local security   --safety gegeben?
 	local ready=0
 	local category=4		--4= noch nix neues
 	local category_buffer={}
+	local security_temp
 -- Here we execute the regular thread code:
 print('Starte Target Loop:')
     while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
 
 --lese/aktualisiere Signalinfos:
---ready   =sim.getIntSignal("ready_signal")
---category=sim.getIntSignal("category_signal")
-
---security signal handling:
-	security=true
---ready signal handling:
-		ready=sim.getIntegerSignal("ready_signal")
+	--security signal update:	
+	security_temp=sim.getIntegerSignal("safety_signal")
+	if security_temp==1 then security=true
+	else security=false
+	end	
+	--print(security)
+	--ready signal update:
+	ready=sim.getIntegerSignal("ready_signal")
 	if ready and ready==1 then--wenn nicht nil
-		--print('target hat von Projektor ready empfangen')
-		--print(ready)
+		--print('target hat von Projektor ready empfangen' .. ready)
 	end
---Category Signal handling:
+	--Category Signal update:
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
 	if category and category~=4 then--wenn nicht nil und was neues
 		print('target hat von Projektor category empfangen:' .. category)--signal anzeigen
@@ -152,7 +153,7 @@ print('Starte Target Loop:')
 		sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
 	end	
 
---Wenn gerade alle 2 bedingungen erfüllt bewegungen starten:
+--Wenn gerade alle Bedingungen erfüllt bewegungen starten:
 
 	if ready==1 then 
 		if security==true then 
