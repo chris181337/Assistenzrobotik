@@ -148,7 +148,9 @@ print('Starte Target Loop:')
 	--Category Signal update:
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
 	if category and category~=4 then--wenn nicht nil und was neues
-		print('target hat von Projektor category empfangen:' .. category)--signal anzeigen
+		print('ready:' .. ready)
+		print('safety' .. security_temp)
+		print('category' .. category)
 		table.insert(category_buffer,category)--Signal in puffer schreiben
 		sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
 	end	
