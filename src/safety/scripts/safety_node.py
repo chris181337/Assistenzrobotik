@@ -9,16 +9,10 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib import collections  as mc
 
 from std_msgs.msg import Float32MultiArray as std_msg_f32_array
 from std_msgs.msg import Float32 as std_msg_f32
-
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib import collections  as mc
-
-import threading
 
 publisher = ""
 points1 = []

@@ -18,11 +18,10 @@ class ObjectClassification(object):
 
 
     rospack = rospkg.RosPack()
-    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_imgnet.h5')
-    # self.model = keras.applications.mobilenet_v2.MobileNetV2(input_shape=(256, 256, 3), alpha=1.0, include_top=True, weights=None, input_tensor=None, pooling=None, classes=3)
+    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_xModel1.h5') #arob_classification_model_imgnetDropout2 
     self.model.compile(loss='categorical_crossentropy',
               optimizer='Adam',
-              metrics=['accuracy'])
+              metrics=['categorical_accuracy'])
     self.model._make_predict_function()
 #    self.sess = tf.Session()
 #    with open(rospack.get_path('vision') + '/src/arob_classification_model-2.pb', "rb") as f:
@@ -53,7 +52,7 @@ class ObjectClassification(object):
         probabilitiy of the detected object
     """
 
-    image = np.array(Image.fromarray(image).resize((256, 256)))
+    image = np.array(Image.fromarray(image).resize((128, 128)))
     image = np.expand_dims(image, axis=0)
     return self.model.predict(image)
 #    return self.sess.run(self.outputTensor, feed_dict = { self.inputTensor:image })
@@ -80,7 +79,7 @@ class ObjectClassification(object):
     obj_max_probs = np.argmax(probs)
     max_probs = np.max(probs)
     if  max_probs <= 0.6:
-      # no recognition 
+      # no recognition
       classif.data = 3
 #      classif.data = 3
 #      classif.prob = max_probs
@@ -91,6 +90,7 @@ class ObjectClassification(object):
 #      classif.obj_type = obj_max_probs
 #      classif.prob = max_probs
 
+    print("[Vision_node] class: %s" %classif.data)
     self.pub.publish(classif)
 
 
@@ -124,6 +124,7 @@ class ObjectClassification(object):
 
 def main():
   rospy.init_node('vision_node')
+  print("[Vision_node] started")
   classific = ObjectClassification()
 
   while not rospy.is_shutdown():
