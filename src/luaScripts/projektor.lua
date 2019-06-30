@@ -20,8 +20,7 @@ end
 --Security auslesen
 function safety_callback(safe)
 --sim.setDoubleSignal("safety_signal",safe)
-print('safetynode published:')
-print(safe.data)
+--print('safetynode published:' .. safe.data)
 end
 ------------------------------------------------------------
 
