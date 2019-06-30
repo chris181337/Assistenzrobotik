@@ -6,7 +6,7 @@ function sysCall_init()
     subPred = simROS.subscribe('/Category', 'std_msgs/Int16', 'nn_class_callback', 20)
 
 -- subscriber on lead time for maxCuboids (100)
-    subTime = simROS.subscribe('/Lead_time', 'std_msgs/Float16', 'lead_time_callback', 20)
+--    subTime = simROS.subscribe('/Lead_time', 'std_msgs/Float16', 'lead_time_callback', 20)
 
 -- counter
     cnt_pred = 0
@@ -47,12 +47,14 @@ function true_class_callback(msg)
     sim.auxiliaryConsolePrint(consoleHandle, '\nFor Image Nr. ' .. cnt_true .. ', the true class is: ' .. msg.data)
 end
 
+--[[
 function lead_time_callback(msg)
     if (not executed1) then
       lead_time = msg.data
       executed1 = true
     end
 end
+--]]
 
 function sysCall_actuation()
  -- ...
@@ -191,8 +193,8 @@ function sysCall_sensing()
 	-- set the default output file as test.lua
 	io.output(file)
 	-- append a word test to the last line of the file
-	io.write("\n---------------RESULTS on vision--------------------- ")
-	io.write("\nrecallTN -- recallFN -- precision")
+	io.write("\n\n---------------RESULTS on vision--------------------- ")
+	io.write("\nrecallTN // recallFN // precision")
 	io.write("\n" .. recallTN_0 .. "\t" .. recallFN_0 .. "\t" .. precision_0)
 	io.write("\n" .. recallTN_1 .. "\t" .. recallFN_1 .. "\t" .. precision_1)
 	io.write("\n" .. recallTN_2 .. "\t" .. recallFN_2 .. "\t" .. precision_2)
@@ -207,11 +209,11 @@ function sysCall_sensing()
 	for i = 1, maxCuboids do
 	  io.write(trueClassesArray[i] .. " - ")
 	end
-	io.write("\n----------------RESULTS on sorting-------------------- ")
-	io.write("\Lead time for " .. maxCuboids .. " cuboids: " .. lead_time)
-	io.write("\Average lead time for one cuboid: " .. (lead_time/maxCuboids))	
-	io.write("\Nr. of correctly sorted cuboids: " .. correctPred)
-	io.write("\n------------------------------------ ")
+	io.write("\n\n----------------RESULTS on sorting-------------------- ")
+	io.write("\nLead time for " .. maxCuboids .. " cuboids: " .. lead_time)
+	io.write("\nAverage lead time for one cuboid: " .. (lead_time/maxCuboids))	
+	io.write("\nNr. of correctly sorted cuboids: " .. correctPred)
+	io.write("\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 	-- close open file
 	io.close(file)
 
