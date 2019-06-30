@@ -157,20 +157,19 @@ print('Starte Target Loop:')
 
 --Wenn gerade alle Bedingungen erfüllt bewegungen starten:
 
-	if ready==1 then 
-		if security==true then 
-			if category_buffer[1] then--qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
+	if (ready==1) and (security==true) and (category_buffer[1]) then --qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
+		
 		print('Starting motion to category:' .. category_buffer[1])
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1])--gibt den pfad an der abgefahren werden soll
-		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.3, 1)--fahre fahrt von oben ab
-
-		sim.switchThread() -- Explicitely switch to another thread now!		
-	
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
+		sim.switchThread() -- Explicitely switch to another thread now!	
+	end
+	if (ready==1) and (security==true) and (category_buffer[1]) then
+		print('Starting Return motion')
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1] .. 'r')--gibt den pfad an der abgefahren werden soll
-		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
 		table.remove(category_buffer , 1)--qbit abgearbeitet, aus buffer rausnehmen
-			end
-		end
+	
 	end
 
 	sim.switchThread() -- Explicitely switch to another thread now!
