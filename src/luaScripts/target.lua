@@ -127,42 +127,43 @@ sim.setThreadAutomaticSwitch(false) --disable automatic thread switches
 	local security=0   --safety gegeben?
 	local ready=0
 	local category=4		--4= noch nix neues
+	local category_buffer={}
 -- Here we execute the regular thread code:
 print('Starte Target Loop:')
-while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
+    while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
 
 --lese/aktualisiere Signalinfos:
 --ready   =sim.getIntSignal("ready_signal")
 --category=sim.getIntSignal("category_signal")
 
 --security signal handling:
-	security=false
+	security=true
 --ready signal handling:
 	ready=sim.getIntegerSignal("ready_signal")
-	if ready then--wenn nicht nil
-	if (ready==1) then
-	print('target hat von Projektor ready empfangen')
-	print(ready)
-	end
+	if ready and ready==1 then--wenn nicht nil
+	--print('target hat von Projektor ready empfangen')
+	--print(ready)
 	end
 --Category Signal handling:
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
-	if category then--wenn nicht nil
-	if(category~=4)then--und was neues
-	print('target hat von Projektor category empfangen:')
-	print(category)--signal anzeigen, in puffer schreiben
+	if category and category~=4 then--wenn nicht nil und was neues
+	print('target hat von Projektor category empfangen:' .. category)--signal anzeigen
+	table.insert(category_buffer,category)--Signal in puffer schreiben
 	sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
 	end	
-	end
 
 --Wenn gerade alle 2 bedingungen erfüllt bewegungen starten:
---pathHandle = sim.getObjectHandle('Path3')--gibt den pfad an der abgefahren werden soll
---sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
---pathHandle = sim.getObjectHandle('Path3r')--gibt den pfad an der abgefahren werden soll
---sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
 
+	if ready==1 and security==true and category_buffer[0] then--qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
+		--print('in movement schleife')
+		pathHandle = sim.getObjectHandle('Path' .. category_buffer[0])--gibt den pfad an der abgefahren werden soll
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
+		pathHandle = sim.getObjectHandle('Path' .. category_buffer[0] .. 'r')--gibt den pfad an der abgefahren werden soll
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
+		table.remove(category_buffer , 1)--qbit abgearbeitet, aus buffer rausnehmen
+	end
 
-sim.switchThread() -- Explicitely switch to another thread now!
+	sim.switchThread() -- Explicitely switch to another thread now!
         -- from now on, above loop is executed once in each simulation step.
         -- this way you do not waste precious computation time and run synchronously.
     end
