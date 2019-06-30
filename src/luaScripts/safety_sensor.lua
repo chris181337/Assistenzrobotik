@@ -60,7 +60,7 @@ function sysCall_sensing()
 
     -- stuff for showing the red lines in the simulation
 
-    measuredData={}
+    --measuredData={}
     
     --if notFirstHere then
     --    -- We skip the very first reading
