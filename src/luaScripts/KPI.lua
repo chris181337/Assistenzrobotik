@@ -2,8 +2,8 @@ function sysCall_init()
     consoleHandle = sim.auxiliaryConsoleOpen('KPI-viewer', 10000, 2+4)
 
 -- subscriber on Object-Class
-    subTrue = simROS.subscribe('/True_Class', 'std_msgs/Int8', 'true_class_callback', 10)
-    subPred = simROS.subscribe('/Category', 'std_msgs/Int16', 'nn_class_callback', 10)
+    subTrue = simROS.subscribe('/True_Class', 'std_msgs/Int8', 'true_class_callback', 20)
+    subPred = simROS.subscribe('/Category', 'std_msgs/Int16', 'nn_class_callback', 20)
 
     cnt_pred = 0
     cnt_true = 0
