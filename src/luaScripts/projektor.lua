@@ -19,8 +19,15 @@ end
 --------------------------------------------------------------
 --Security auslesen
 function safety_callback(safe)
---sim.setDoubleSignal("safety_signal",safe)
---print('safetynode published:' .. safe.data)
+
+	if safe.data then
+	sim.setDoubleSignal("safety_signal",safe.data)
+	print(safe.data .. 'received')
+	else
+	print('nil received')
+	end
+
+print('safetynode published:' .. safe.data)
 end
 ------------------------------------------------------------
 
