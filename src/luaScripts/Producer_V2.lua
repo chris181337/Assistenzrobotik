@@ -7,22 +7,12 @@ function sysCall_init()
     sensor=sim.getObjectHandle('ConveyorBelt_sensor')
 
 -- Enable publisher for true class of the cuboids spawned (Nagel: 0, Schraube: 1, Unterlegscheibe: 2, None: 3) 
---    pub=simROS.advertise('/True_Class', 'std_msgs/Int8MultiArray')
-    pub=simROS.advertise('/True_Class', 'std_msgs/Int8', 10)
+    pub = simROS.advertise('/True_Class', 'std_msgs/Int8', 10)
+    pubH = simROS.advertise('/Cuboid_handler', 'std_msgs/Int16', 10)
 
     path_scene = sim.getStringParameter(sim.stringparam_scene_path)
     path = path_scene .. '/../catkin_ws/src/presentation_dataset/'
---[[
--- PARAMETER
-    cnt = 1
-    maxCuboids = 10
 
--- array for true classes/label
-    classTrueArray = {} 
-    for i=1, maxCuboids do
-	classTrueArray[i] = 4 -- initialize wth 4 for "empty"
-    end
---]]
 
 -- some configs of producer (fabrication time, color of cuboids etc.)
     output=-1
@@ -63,42 +53,26 @@ end
 projectTexture = function()
 -- texture from random image-file
     rndClass = math.random(0, 3)
---    print(rndClass)
     simROS.publish(pub,{data = rndClass})
 
     if (rndClass == 3) then
       rndPic = math.random(0, 9)
       filename = "none" .. rndPic .. ".jpg"
---      print(filename)
---      classTrueArray[cnt] = 3
---      cnt = cnt +1
     end
 
     if (rndClass == 2) then
       rndPic = math.random(0, 29)
       filename = "unterlegscheibe" .. rndPic .. ".jpg"
---      print(filename)
---      simROS.publish(pub,{data=2})
---      classTrueArray[cnt] = 2
---      cnt = cnt +1
     end
 
     if (rndClass == 1) then
       rndPic = math.random(0, 29)
       filename = "schraube" .. rndPic .. ".jpg"
---      print(filename)
---      simROS.publish(pub,{data=1})
---      classTrueArray[cnt] = 1
---      cnt = cnt +1
     end
 
     if (rndClass == 0) then
       rndPic = math.random(0, 29)
       filename = "nagel" .. rndPic .. ".jpg"
---      print(filename)
---     simROS.publish(pub,{data=0})
---      classTrueArray[cnt] = 0
---      cnt = cnt +1
     end
 
     textureHandle, textureId = simCreateTexture(path .. filename, 1, nil, nil, nil, 0, nil)
@@ -108,31 +82,16 @@ projectTexture = function()
 --    print("------------------------")
 
     if (textureId~=-1 and h~=-1) then
+	-- publish handler of cuboid
+        simROS.publish(pubH,{data = h})
+	print("h: " .. h)
+
+	-- project texture on cuboid
         simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.15,0.15}, nil, nil)
         simSetObjectSpecialProperty(h,sim.objectspecialproperty_renderable+sim.objectspecialproperty_detectable_all)
         simSetObjectSpecialProperty(textureHandle,sim.objectspecialproperty_renderable+sim.objectspecialproperty_detectable_all)
     end
 
-
-
---[[
--- pusblish the classTrueArray, when reaching the nmax. number of cuboids
-    if (cnt == maxCuboids) then
-   	print("---------------------")
-      for i = 1, maxCuboids do
-   	print(classTrueArray[i])
-      end
-   	print("---------------------")
-
-      d = {}
-      d["data"] = classTrueArray
-      d["layout"] = {
-        dim = { { label="classes", size=maxCuboids, stride=1 } },
-        data_offset = 0
-      }
-      simROS.publish(pub,d)
-   end
---]]
 end
 
 

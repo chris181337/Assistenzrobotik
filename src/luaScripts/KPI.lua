@@ -5,12 +5,16 @@ function sysCall_init()
     subTrue = simROS.subscribe('/True_Class', 'std_msgs/Int8', 'true_class_callback', 20)
     subPred = simROS.subscribe('/Category', 'std_msgs/Int16', 'nn_class_callback', 20)
 
+-- subscriber on lead time for maxCuboids (100)
+    subTime = simROS.subscribe('/Lead_time', 'std_msgs/Float16', 'lead_time_callback', 20)
+
+-- counter
     cnt_pred = 0
     cnt_true = 0
 
     --PARAMETER:  max. number of cuboids
     maxCuboids = 10
-    executeOnce = true
+    executed2 = false
 
 -- initialize arrays in order to collect 
     predClassesArray = {} -- predicted classes from /Category-Topic
@@ -20,15 +24,9 @@ function sysCall_init()
 	trueClassesArray[i] = 4
     end
 
--- initialize matrix
---[[	confusionMtx = {}
-	    for i=0,3 do
-	      confusionMtx[i] = {}     -- create a new row
-	      for j=1, do
-		confusionMtx[i][j] = 0
-	      end
-	    end
---]]
+    lead_time = 0
+    executed1 = false
+
     path_scene = sim.getStringParameter(sim.stringparam_scene_path)
     path_results = path_scene .. '/../catkin_ws/results/'
 end
@@ -49,7 +47,12 @@ function true_class_callback(msg)
     sim.auxiliaryConsolePrint(consoleHandle, '\nFor Image Nr. ' .. cnt_true .. ', the true class is: ' .. msg.data)
 end
 
-
+function lead_time_callback(msg)
+    if (not executed1) then
+      lead_time = msg.data
+      executed1 = true
+    end
+end
 
 function sysCall_actuation()
  -- ...
@@ -57,7 +60,7 @@ end
 
 
 function sysCall_sensing()
-    if (cnt_true >= maxCuboids and cnt_pred == maxCuboids and executeOnce) then
+    if (cnt_true >= maxCuboids and cnt_pred == maxCuboids and (not executed2)) then
 
 	--print array with the predicted classes
 	sim.auxiliaryConsolePrint(consoleHandle,"\nArray of pred. classes: " )	
@@ -175,18 +178,20 @@ function sysCall_sensing()
 	precision_3 = TP_3/(TP_3 + FP_3)
 --	sim.auxiliaryConsolePrint(consoleHandle,"\n--- on Class 3 --- None: recall (TN): " .. recallTN_3 .. ", recall (NF): " .. recallFN_3 .. ", precision: " .. precision_3)
 
-	-- calculate accuracy
-	accuracy_all = (TP_0 + TP_1 + TP_2 + TP_3)/maxCuboids
+	-- calculate correctly predicted cuboids and resulting accuracy
+	correctPred = TP_0 + TP_1 + TP_2 + TP_3
+	accuracy_all = correctPred/maxCuboids
 --	sim.auxiliaryConsolePrint(consoleHandle,"\n--- overall accuracy: " .. accuracy_all)
 
 	noRec = FP_3 + TP_3
 
 	-- write everything into result-file
-	-- Opens a file in append mode
+	-- Open a file in append mode
 	file = io.open(path_results .. "result.txt", "a")
-	-- sets the default output file as test.lua
+	-- set the default output file as test.lua
 	io.output(file)
-	-- appends a word test to the last line of the file
+	-- append a word test to the last line of the file
+	io.write("\n---------------RESULTS on vision--------------------- ")
 	io.write("\nrecallTN -- recallFN -- precision")
 	io.write("\n" .. recallTN_0 .. "\t" .. recallFN_0 .. "\t" .. precision_0)
 	io.write("\n" .. recallTN_1 .. "\t" .. recallFN_1 .. "\t" .. precision_1)
@@ -202,11 +207,15 @@ function sysCall_sensing()
 	for i = 1, maxCuboids do
 	  io.write(trueClassesArray[i] .. " - ")
 	end
+	io.write("\n----------------RESULTS on sorting-------------------- ")
+	io.write("\Lead time for " .. maxCuboids .. " cuboids: " .. lead_time)
+	io.write("\Average lead time for one cuboid: " .. (lead_time/maxCuboids))	
+	io.write("\Nr. of correctly sorted cuboids: " .. correctPred)
 	io.write("\n------------------------------------ ")
-	-- closes the open file
+	-- close open file
 	io.close(file)
 
-    executeOnce = false
+    executed2 = true
     end
 
 end
