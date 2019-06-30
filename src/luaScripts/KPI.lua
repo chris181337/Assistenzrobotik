@@ -179,6 +179,8 @@ function sysCall_sensing()
 	accuracy_all = (TP_0 + TP_1 + TP_2 + TP_3)/maxCuboids
 --	sim.auxiliaryConsolePrint(consoleHandle,"\n--- overall accuracy: " .. accuracy_all)
 
+	noRec = FP_3 + TP_3
+
 	-- write everything into result-file
 	-- Opens a file in append mode
 	file = io.open(path_results .. "result.txt", "a")
@@ -191,6 +193,7 @@ function sysCall_sensing()
 	io.write("\n" .. recallTN_2 .. "\t" .. recallFN_2 .. "\t" .. precision_2)
 	io.write("\n" .. recallTN_3 .. "\t" .. recallFN_3 .. "\t" .. precision_3)
 	io.write("\naccuracy: " .. accuracy_all)
+	io.write("\nnot recognized: " .. noRec)
 	io.write("\nArray of pred. classes: " )	
 	for i = 1, maxCuboids do
 	  io.write(predClassesArray[i] .. " - ")
