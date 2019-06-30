@@ -169,6 +169,9 @@ print('Starte Target Loop:')
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1] .. 'r')--gibt den pfad an der abgefahren werden soll
 		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
 		table.remove(category_buffer , 1)--qbit abgearbeitet, aus buffer rausnehmen
+		
+		--if category==3 then
+		--stark walking
 	
 	end
 
