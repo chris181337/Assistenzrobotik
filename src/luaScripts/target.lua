@@ -155,20 +155,20 @@ print('Starte Target Loop:')
 
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
 	if category and category~=4 then--wenn nicht nil und was neues
-	print('ready:' .. ready)
-	print('safety' .. security_temp)
-	print('category' .. category)
+	--print('ready:' .. ready)
+	--print('safety' .. security_temp)
+	--print('category' .. category)
 	table.insert(category_buffer,category)--Signal in puffer schreiben
 	sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
 	end	
 
 
---
+--[[
 --überbrücke vision node:
 	category=3--nix erkannt
 	table.insert(category_buffer,category)--Signal in puffer schreiben
 	sim.setIntegerSignal("category_signal",4)	
----
+---]]
 
 
 
