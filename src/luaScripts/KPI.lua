@@ -6,7 +6,7 @@ function sysCall_init()
     subPred = simROS.subscribe('/Category', 'std_msgs/Int16', 'nn_class_callback', 20)
 
 -- subscriber on lead time for maxCuboids (100)
---    subTime = simROS.subscribe('/Lead_time', 'std_msgs/Float16', 'lead_time_callback', 20)
+    subTime = simROS.subscribe('/Simulation_Time_100', 'std_msgs/Float32', 'lead_time_callback', 20)
 
 -- counter
     cnt_pred = 0
@@ -45,16 +45,16 @@ function true_class_callback(msg)
 -- collect data for later calucations
     trueClassesArray[cnt_true] = msg.data
     sim.auxiliaryConsolePrint(consoleHandle, '\nFor Image Nr. ' .. cnt_true .. ', the true class is: ' .. msg.data)
+    print(sim.getSimulationTime())
 end
 
---[[
 function lead_time_callback(msg)
     if (not executed1) then
       lead_time = msg.data
       executed1 = true
     end
 end
---]]
+
 
 function sysCall_actuation()
  -- ...
@@ -62,7 +62,7 @@ end
 
 
 function sysCall_sensing()
-    if (cnt_true >= maxCuboids and cnt_pred == maxCuboids and (not executed2)) then
+    if (cnt_true >= maxCuboids and cnt_pred >= maxCuboids and executed1 and (not executed2)) then
 
 	--print array with the predicted classes
 	sim.auxiliaryConsolePrint(consoleHandle,"\nArray of pred. classes: " )	
@@ -225,6 +225,7 @@ end
 function sysCall_cleanup()
    simROS.shutdownSubscriber(subTrue)
    simROS.shutdownSubscriber(subPred)
+   simROS.shutdownSubscriber(subTime)
 end
 
 -- You can define additional system calls here:
