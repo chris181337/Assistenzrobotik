@@ -150,6 +150,8 @@ print('Starte Target Loop:')
         ready=sim.getIntegerSignal("ready_signal")
 
 --Category Signal handling:
+	
+
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
 	if category and category~=4 then--wenn nicht nil und was neues
 	print('ready:' .. ready)
@@ -160,7 +162,13 @@ print('Starte Target Loop:')
 	end	
 
 
----
+--[[
+--überbrücke vision node:
+	category=3--nix erkannt
+	table.insert(category_buffer,category)--Signal in puffer schreiben
+	sim.setIntegerSignal("category_signal",4)	
+---]]
+
 
 
 --Wenn gerade alle Bedingungen erfüllt Bewegungen starten:
