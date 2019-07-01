@@ -7,10 +7,6 @@ function sysCall_init()
     sub=simROS.subscribe('/qbit_ready', 'std_msgs/Bool', 'qbitready_callback')
 end
 
-function sysCall_cleanup() 
- 
-end 
-
 function sysCall_actuation() 
 
 -- wenn Sensor Objekt detektiert => Conveyor abschalten & "ready" publishen
@@ -47,4 +43,9 @@ end
 
 function qbitready_callback(msg)
     --print(msg.data)--würde permanent true/false ausgeben
+end
+
+function sysCall_cleanup()
+    simROS.shutdownSubscriber(sub)
+    simROS.shutdownPublisher(pub)
 end
