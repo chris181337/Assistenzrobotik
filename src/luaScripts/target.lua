@@ -170,7 +170,7 @@ print('Starte Target Loop:')
           	sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
 		
     	    	workcycle_count=workcycle_count+1
-		if workcycle_count ==100 then simROS.publish(pub,{data = sim.getSimulationTime()}) end
+		if workcycle_count ==10 then simROS.publish(pub,{data = sim.getSimulationTime()}) end
 
 --          	simSetIntegerSignal('VacuumCup_active',1) -- wird nicht benötigt, da wir derzeit nicht mit Signals arbeiten.
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1] .. 'r')--gibt den pfad an der abgefahren werden soll
