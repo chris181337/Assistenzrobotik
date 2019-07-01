@@ -158,7 +158,6 @@ print('Starte Target Loop:')
 	end	
 
 --Wenn gerade alle 2 bedingungen erfüllt bewegungen starten:
-
 	if ready==1 and security==true and category_buffer[1] then--qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
 		--print('in movement schleife')
           -- TODO: greifen attach to gripper (Funktionalität überprüfen!) -- (aus der Demo "blobDetectionWithPickAndPlace.ttt")
@@ -173,6 +172,13 @@ print('Starte Target Loop:')
               if category_buffer[1] == 3 then
                 sim.setIntegerSignal("the_other_bill_showtime", 1)
               end
+
+              next_delete_handle = sim.getIntegerSignal("cube_next_delete")
+              print("Removing " .. next_delete_handle)
+              sim.setObjectPosition(next_delete_handle, -1, {0, 0, -1000})
+              --sim.removeObject(next_delete_handle)
+              --sim.removeModel(next_delete_handle)
+              sim.setIntegerSignal("cube_deleted", 1)
 		
     	    	workcycle_count=workcycle_count+1
 		if workcycle_count ==10 then simROS.publish(pub,{data = sim.getSimulationTime()}) end

@@ -1,5 +1,6 @@
+
 function sysCall_init() 
-    setVariable=true
+    setVariable = true
     BillHandle=sim.getObjectHandle('Bill_base')
     legJointHandles={sim.getObjectHandle('Bill_leftLegJoint'),sim.getObjectHandle('Bill_rightLegJoint')}
     kneeJointHandles={sim.getObjectHandle('Bill_leftKneeJoint'),sim.getObjectHandle('Bill_rightKneeJoint')}
@@ -68,6 +69,9 @@ colorCorrectionFunction=function(_aShapeHandle_)
   return '@backCompatibility1:'.._aShapeHandle_ 
 end 
 ------------------------------------------------------------------------------ 
+
+function message_callback(msg)
+end
  
  
 setColor=function(objectTable,colorName,color)
@@ -97,6 +101,12 @@ function sysCall_cleanup()
 end 
 
 function sysCall_actuation() 
+    if sim.getIntegerSignal("cube_handle_set") == 1 then
+        sim.setIntegerSignal("cube_handle_set", 0)
+        handle = sim.getIntegerSignal("cube_handle")
+        print(handle)
+    end
+
     dt=sim.getSimulationTimeStep()
     simTime=sim.getSimulationTime()
     
