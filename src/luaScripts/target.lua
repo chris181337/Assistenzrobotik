@@ -114,7 +114,6 @@ sim.setThreadIsFree(true)
 --Put some initialization code here:
 print('Initializiere Target:')
 sim.setThreadAutomaticSwitch(false) --disable automatic thread switches
-pub=simROS.advertise('/Simulation_Time_100', 'std_msgs/Float32', 10)
     
  --Für Motionplanning nötiige Variablen:
     local thisObjectHandle = sim.getObjectAssociatedWithScript(sim.handle_self)
@@ -122,65 +121,57 @@ pub=simROS.advertise('/Simulation_Time_100', 'std_msgs/Float32', 10)
     local changeOrientationOnly = 2
     local changePositionAndOrientation = 3
     local pathHandle
-
-    local suctionPad=sim.getObjectHandle('suctionPad')
-    local workcycle_count=0
  --Sammle folgende Infos aus Signalen:
 	local ready=0          --Ist der qbit schon da?
 	local category=3       --was für ein Qbit ist das?
-	local security=0   --safety gegeben?
-	local ready=0
-	local category=4		--4= noch nix neues
+	local security         --safety gegeben?
+	local category=4	--4= noch nix neues
 	local category_buffer={}
+	local security_temp
 -- Here we execute the regular thread code:
 print('Starte Target Loop:')
     while sim.getSimulationState()~=sim.simulation_advancing_abouttostop do
 
 --lese/aktualisiere Signalinfos:
---ready   =sim.getIntSignal("ready_signal")
---category=sim.getIntSignal("category_signal")
-
---security signal handling:
-	security=true  -- TODO: Abfrage ob true oder false soll durch die ros security_node erfolgen.
---ready signal handling:
-    ready=sim.getIntegerSignal("ready_signal")
-    
+--security signal update:	
+	security_temp=sim.getIntegerSignal("safety_signal")
+	if security_temp==1 then security=true
+	else security=false
+	end	
+	--print(security)
+--ready signal update:
+	ready=sim.getIntegerSignal("ready_signal")
 	if ready and ready==1 then--wenn nicht nil
-	--print('target hat von Projektor ready empfangen')
-	--print(ready)
+		--print('target hat von Projektor ready empfangen' .. ready)
 	end
---Category Signal handling:
+--Category Signal update:
 	category=sim.getIntegerSignal("category_signal")--Signal ansehn
 	if category and category~=4 then--wenn nicht nil und was neues
-	print('target hat von Projektor category empfangen:' .. category)--signal anzeigen
-	table.insert(category_buffer,category)--Signal in puffer schreiben
-	sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
+		print('ready:' .. ready)
+		print('safety' .. security_temp)
+		print('category' .. category)
+		table.insert(category_buffer,category)--Signal in puffer schreiben
+		sim.setIntegerSignal("category_signal",4)--signal zurücksetzen
 	end	
 
---Wenn gerade alle 2 bedingungen erfüllt bewegungen starten:
+--Wenn gerade alle Bedingungen erfüllt bewegungen starten:
 
-	if ready==1 and security==true and category_buffer[1] then--qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
-		--print('in movement schleife')
-          -- TODO: greifen attach to gripper (Funktionalität überprüfen!) -- (aus der Demo "blobDetectionWithPickAndPlace.ttt")
--- We are just above the shape. Activate the suction pad:
-	        sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','true')
-		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1])--gibt den pfad an der abgefahren werden soll
--- TODO: in sim.followpath kann man evtl. die velocity-Werte abhängig von Tom's Safety (Abtand) machen.
-		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
--- Deactivate the suction pad:
-              sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
-              
-              if category_buffer[1] == 3 then
-                sim.setIntegerSignal("the_other_bill_showtime", 1)
-              end
+	if (ready==1) and (security==true) and (category_buffer[1]) then --qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
 		
-    	    	workcycle_count=workcycle_count+1
-		if workcycle_count ==10 then simROS.publish(pub,{data = sim.getSimulationTime()}) end
-
---          	simSetIntegerSignal('VacuumCup_active',1) -- wird nicht benötigt, da wir derzeit nicht mit Signals arbeiten.
+		print('Starting motion to category:' .. category_buffer[1])
+		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1])--gibt den pfad an der abgefahren werden soll
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
+		sim.switchThread() -- Explicitely switch to another thread now!	
+	end
+	if (ready==1) and (security==true) and (category_buffer[1]) then
+		print('Starting Return motion')
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1] .. 'r')--gibt den pfad an der abgefahren werden soll
-		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
 		table.remove(category_buffer , 1)--qbit abgearbeitet, aus buffer rausnehmen
+		
+		--if category==3 then
+		--stark walking
+	
 	end
 
 	sim.switchThread() -- Explicitely switch to another thread now!
@@ -191,5 +182,4 @@ end
 
 function sysCall_cleanup()
     -- Put some clean-up code here
-    simROS.shutdownPublisher(pub)
 end
