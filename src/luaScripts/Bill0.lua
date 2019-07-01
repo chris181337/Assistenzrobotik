@@ -109,7 +109,7 @@ function sysCall_actuation()
     
     --if (simTime>pauseUntil)and(journeyCount<singleJourneyCount) then
     if sim.getIntegerSignal("the_other_bill_showtime") == 1 then
-        print(simTime)
+        --print(simTime)
     
         pathL=sim.getPathLength(pathHandle)
         if (location==0)or(location==3) then
