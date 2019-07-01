@@ -1,4 +1,5 @@
 function sysCall_init() 
+    setVariable=true
     BillHandle=sim.getObjectHandle('Bill_base')
     legJointHandles={sim.getObjectHandle('Bill_leftLegJoint'),sim.getObjectHandle('Bill_rightLegJoint')}
     kneeJointHandles={sim.getObjectHandle('Bill_leftKneeJoint'),sim.getObjectHandle('Bill_rightKneeJoint')}
@@ -102,12 +103,19 @@ function sysCall_actuation()
     s=sim.getObjectSizeFactor(BillHandle)
     
     if (simTime>pauseUntil)and(journeyCount<singleJourneyCount) then
+        if setVariable then
+            -- *******************************************************
+            -- * uncommend to let bill#0 start when this bill starts *
+            -- *******************************************************
+            --sim.setIntegerSignal("the_other_bill_showtime", 1)
+            setVariable=false
+        end
     
         pathL=sim.getPathLength(pathHandle)
         if (location==0)or(location==3) then
             location=location+1
         end
-    
+
         walkingDir=1
         if (location==4)or(location==5) then
             walkingDir=-1 
@@ -163,12 +171,14 @@ function sysCall_actuation()
             if (currentPosOnPath>pathL-0.001)and(walkingDir>0) then
                 location=3
                 pauseUntil=simTime+goalPosPause
+                setVariable=true
                 journeyCount=journeyCount+1
             end
             -- Check if Bill arrived at the start position:
             if (currentPosOnPath<0.001)and(walkingDir<0) then
                 location=0
                 pauseUntil=simTime+startPosPause
+                setVariable=true
                 journeyCount=journeyCount+1
             end
             -- We calculate the Bill's orientation:

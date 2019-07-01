@@ -143,7 +143,8 @@ print('Starte Target Loop:')
 --security signal handling:
 	security=true  -- TODO: Abfrage ob true oder false soll durch die ros security_node erfolgen.
 --ready signal handling:
-	ready=sim.getIntegerSignal("ready_signal")
+    ready=sim.getIntegerSignal("ready_signal")
+    
 	if ready and ready==1 then--wenn nicht nil
 	--print('target hat von Projektor ready empfangen')
 	--print(ready)
@@ -167,7 +168,11 @@ print('Starte Target Loop:')
 -- TODO: in sim.followpath kann man evtl. die velocity-Werte abhängig von Tom's Safety (Abtand) machen.
 		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
 -- Deactivate the suction pad:
-          	sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
+              sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
+              
+              if category_buffer[1] == 3 then
+                sim.setIntegerSignal("the_other_bill_showtime", 1)
+              end
 		
     	    	workcycle_count=workcycle_count+1
 		if workcycle_count ==10 then simROS.publish(pub,{data = sim.getSimulationTime()}) end

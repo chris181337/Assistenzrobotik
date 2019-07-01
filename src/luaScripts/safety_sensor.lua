@@ -35,11 +35,9 @@ function sysCall_init()
 end
 
 function sysCall_cleanup() 
+    simROS.shutdownPublisher(pub)
     sim.removeDrawingObject(lines)
 end 
-
-function sysCall_sensing()
-end
 
 function sysCall_sensing() 
     depth1 = sim.getVisionSensorDepthBuffer(visionSensor1Handle)
