@@ -290,5 +290,5 @@ function sysCall_cleanup()
     end
 
     simROS.shutdownPublisher(pub)
-
+    simROS.shutdownPublisher(pubH)
 end 

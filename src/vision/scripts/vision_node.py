@@ -17,7 +17,7 @@ class ObjectClassification(object):
   def __init__(self):
 
     rospack = rospkg.RosPack()
-    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_imgnetDropout2.h5') #arobModel_Xception_mAmD30_SGD #arobModel_Xception_mAoD
+    self.model = keras.models.load_model(rospack.get_path('vision') + '/src/arob_classification_model_xModel1.h5') #arobModel_Xception_mAmD30_SGD #arobModel_Xception_mAoD
     self.sgd = keras.optimizers.SGD(lr=0.01, momentum=0.8, decay=0.0, nesterov=False)
     self.model.compile(loss='categorical_crossentropy',
               optimizer=self.sgd,
