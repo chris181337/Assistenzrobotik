@@ -90,7 +90,6 @@ projectTexture = function()
 	-- publish handler of cuboid
         simROS.publish(pubH,{data = h})
         sim.setIntegerSignal("cube_add_handle", h)
-	print("h: " .. h)
 
 	-- project texture on cuboid
         simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.15,0.15}, nil, nil)
@@ -220,7 +219,6 @@ function sysCall_actuation()
     -- Handle stuff for deleting cubes at the end 
     if sim.getIntegerSignal("cube_add_handle") > 0 then
         handles[#handles + 1] = sim.getIntegerSignal("cube_add_handle")
-        print(handles)
         sim.setIntegerSignal("cube_add_handle", 0)
         sim.setIntegerSignal("cube_next_delete", handles[1])
     end
