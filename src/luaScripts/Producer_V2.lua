@@ -1,4 +1,9 @@
 function sysCall_init() 
+    -- cube deleting handle stuff - don't delete
+    handles = {}
+    sim.setIntegerSignal("cube_add_handle", 0)
+    sim.setIntegerSignal("cube_deleted", 0)
+
     model=sim.getObjectAssociatedWithScript(sim.handle_self)
     uiH=simGetUIHandle('producerUI')
     sens=sim.getObjectHandle('Producer_sensOut')
@@ -84,7 +89,7 @@ projectTexture = function()
     if (textureId~=-1 and h~=-1) then
 	-- publish handler of cuboid
         simROS.publish(pubH,{data = h})
-	print("h: " .. h)
+        sim.setIntegerSignal("cube_add_handle", h)
 
 	-- project texture on cuboid
         simSetShapeTexture(h, textureId, sim.texturemap_plane, 3, {0.15,0.15}, nil, nil)
@@ -210,6 +215,24 @@ end
 
 function sysCall_actuation() 
 -- config
+    -- *****************************
+    -- Handle stuff for deleting cubes at the end 
+    if sim.getIntegerSignal("cube_add_handle") > 0 then
+        handles[#handles + 1] = sim.getIntegerSignal("cube_add_handle")
+        sim.setIntegerSignal("cube_add_handle", 0)
+        sim.setIntegerSignal("cube_next_delete", handles[1])
+    end
+    if sim.getIntegerSignal("cube_deleted") == 1 then
+        for i=1,(#handles-1) do
+            handles[i] = handles[i+1]
+        end
+        handles[#handles] = nil
+        sim.setIntegerSignal("cube_deleted", 0)
+        --table.sort(handles) -- why do we need this?
+        sim.setIntegerSignal("cube_next_delete", handles[1])
+    end
+    -- ******************************
+
     col={0,0,0}
     ft=1.8
 

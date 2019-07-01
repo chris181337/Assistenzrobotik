@@ -107,6 +107,7 @@ end
 ------------------------------------------------------------
 --]]
 
+
 function sysCall_threadmain()
 
 sim.setThreadIsFree(true)
@@ -189,8 +190,14 @@ print('Starte Target Loop:')
                 sim.setIntegerSignal("the_other_bill_showtime", 1)
               	end
 	
-
---workcycle abhaken
+-- super fancy-ges delete cube stuff
+              next_delete_handle = sim.getIntegerSignal("cube_next_delete")
+              print("Removing " .. next_delete_handle)
+              sim.setObjectPosition(next_delete_handle, -1, {0, 0, -1000})
+              --sim.removeObject(next_delete_handle)
+              --sim.removeModel(next_delete_handle)
+              sim.setIntegerSignal("cube_deleted", 1)
+		
     	    	workcycle_count=workcycle_count+1
 		if workcycle_count ==10 then simROS.publish(pub,{data = sim.getSimulationTime()}) end
 		end
