@@ -13,8 +13,6 @@ end
 ------------------------------------------------------------
 --qbit type auslesen
 function cubit_sort_callback(qbit_cat)
-print('Projektor sendet category:')
-print(qbit_cat.data)
 sim.setIntegerSignal("category_signal", qbit_cat.data)
 end
 ------------------------------------------------------------
@@ -26,7 +24,6 @@ function safety_callback(safe)
 
 	if safe.data then
 	sim.setIntegerSignal("safety_signal",safe.data)
-	--print(safe.data)
 	end
 end
 ------------------------------------------------------------

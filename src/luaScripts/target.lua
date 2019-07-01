@@ -162,33 +162,33 @@ print('Starte Target Loop:')
 	end	
 
 
---[[
+--
 --überbrücke vision node:
 	category=3--nix erkannt
 	table.insert(category_buffer,category)--Signal in puffer schreiben
 	sim.setIntegerSignal("category_signal",4)	
----]]
+---
 
 
 
 --Wenn gerade alle Bedingungen erfüllt Bewegungen starten:
 
 --Hinweg:
-		if (ready==1) and (security==true) and (category_buffer[1]) then --qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden, qbitwert nicht wartend
-		-- We are just above the shape. Activate the suction pad:
+	if (ready==1) and (security==true) and (category_buffer[1]) then --qbit liegt auf sensor, bill is weit weg, qbit wert vorhanden
+		print('Starting Motion to Category:' .. category_buffer[1])
+--greifen
 	        sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','true')
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1])--gibt den pfad an der abgefahren werden soll
-		-- TODO: in sim.followpath kann man evtl. die velocity-Werte abhängig von Tom's Safety (Abtand) machen.
-		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
-		-- Deactivate the suction pad:
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
+--loslassen	
 		sim.setScriptSimulationParameter(sim.getScriptAssociatedWithObject(suctionPad),'active','false')
               	
-
+		
 --Bill laufen
 		if category_buffer[1] == 3 then
                 sim.setIntegerSignal("the_other_bill_showtime", 1)
               	end
-
+	
 
 --workcycle abhaken
     	    	workcycle_count=workcycle_count+1
@@ -200,7 +200,7 @@ print('Starte Target Loop:')
 		print('Starting Return motion')
 --          	simSetIntegerSignal('VacuumCup_active',1) -- wird nicht benötigt, da wir derzeit nicht mit Signals arbeiten.
 		pathHandle = sim.getObjectHandle('Path' .. category_buffer[1] .. 'r')--gibt den pfad an der abgefahren werden soll
-		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 1, 1)--fahre fahrt von oben ab
+		sim.followPath(thisObjectHandle, pathHandle, changePositionOnly, 0, 0.7, 1)--fahre fahrt von oben ab
 		table.remove(category_buffer , 1)--qbit abgearbeitet, aus buffer rausnehmen
 		end
 --fertig
