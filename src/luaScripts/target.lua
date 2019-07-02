@@ -163,12 +163,12 @@ print('Starte Target Loop:')
 	end	
 
 
---[[
---überbrücke vision node:
+
+--[[überbrücke vision node:
 	category=3--nix erkannt
 	table.insert(category_buffer,category)--Signal in puffer schreiben
 	sim.setIntegerSignal("category_signal",4)	
----]]
+--]]
 
 
 
