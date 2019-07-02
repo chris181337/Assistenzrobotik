@@ -13,7 +13,7 @@ function sysCall_init()
 
 -- Enable publisher for true class of the cuboids spawned (Nagel: 0, Schraube: 1, Unterlegscheibe: 2, None: 3) 
     pub = simROS.advertise('/True_Class', 'std_msgs/Int8', 10)
-    pubH = simROS.advertise('/Cuboid_handler', 'std_msgs/Int16', 10)
+--    pubH = simROS.advertise('/Cuboid_handler', 'std_msgs/Int16', 10)
 
     path_scene = sim.getStringParameter(sim.stringparam_scene_path)
     path = path_scene .. '/../catkin_ws/src/presentation_dataset/'
@@ -88,7 +88,7 @@ projectTexture = function()
 
     if (textureId~=-1 and h~=-1) then
 	-- publish handler of cuboid
-        simROS.publish(pubH,{data = h})
+--        simROS.publish(pubH,{data = h})
         sim.setIntegerSignal("cube_add_handle", h)
 
 	-- project texture on cuboid
@@ -214,7 +214,7 @@ scanOutput=function()
 end
 
 function sysCall_actuation() 
--- config
+
     -- *****************************
     -- Handle stuff for deleting cubes at the end 
     if sim.getIntegerSignal("cube_add_handle") > 0 then
@@ -233,6 +233,7 @@ function sysCall_actuation()
     end
     -- ******************************
 
+-- config
     col={0,0,0}
     ft=1.8
 
@@ -313,5 +314,5 @@ function sysCall_cleanup()
     end
 
     simROS.shutdownPublisher(pub)
-    simROS.shutdownPublisher(pubH)
+--    simROS.shutdownPublisher(pubH)
 end 
